@@ -1,0 +1,45 @@
+<div @click="itemClick" :class="['file-item file-manager-item', 'type-' + item.type, {'file-manager-item-busy': item.busy, 'file-manager-item-confirming': item.confirming, 'item-selected': isSelectedItem(item), 'item-highlighted': item.highlighted, 'section-busy': fm.fileListBusy}]" :data-path="item.path" :data-type="item.type">
+    <div class="file-item-row">
+        <span class="item-info">
+            <span :class="['item-icon fa', {'fa-folder': item.type == 'dir', 'fa-file' : item.type == 'file'}, fileIconClass]"></span>
+            <span v-if="!item.renaming" class="item-name" v-html="item.name"></span>
+            <input v-else class="item-name-input" v-model="item.newName" type="text" data-operation='rename' @keydown.prevent.enter="itemOperation" @keydown.prevent.stop.esc="listItemReset" />
+        </span>
+        <span class="item-tools" v-if="item.mutable">
+            <a href="#" :title="translate('Save')" v-if="fm.allowDownloads && item.type == 'file'" class="item-operation-link download-item fa fa-download" @click.self.stop.prevent="downloadFile"></a>
+            <a href="#" :title="translate('Compress')" v-if="!item.archive && item.mutable" class="item-operation-link compress-item fa fa-compress" data-operation="compress" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Uncompress')" v-if="item.archive && item.mutable" class="item-operation-link uncompress-item fa fa-expand" data-operation="uncompress" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Info')" class="item-operation-link item-info-toggle fa fa-info-circle" @click.self.stop.prevent="toggleInfo"></a>
+            <a href="#" :title="translate('Open')" class="item-operation-link view-file fa fa-eye" @click.self.stop.prevent="openFile"></a>
+            <a href="#" :title="translate('Delete')" class="item-operation-link delete-item fa fa-trash" data-operation="delete" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Rename')" class="item-operation-link rename-item fa fa-keyboard-o" data-operation="rename" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Copy')" :class="['item-operation-link copy-item fa fa-files-o', {'active-link': isCopiedItem(item)}]" data-operation="copy" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Cut')" :class="['item-operation-link cut-item fa fa-cut', {'active-link': isCutItem(item)}]" data-operation="cut" @click.self.stop.prevent="itemOperation"></a>
+            <a href="#" :title="translate('Select')" :class="['item-operation-link select-item fa', {'fa-check-square-o': isSelectedItem(item), 'fa-square-o': !isSelectedItem(item), 'element-placeholder': !fm.selectMode}]" data-operation="select" @click.self.stop.prevent="itemOperation"></a>
+        </span>
+        <span class="item-confirmation" v-if="item.confirming && item.confirming == 'delete' || item.confirming == 'rename'">
+            {{ translate('Are you sure') }}?
+            <a href="#" class="item-confirm fa fa-check" :data-operation="item.confirming" @click.prevent="itemConfirm" @keydown.prevent.stop.esc="itemCancel"></a>
+            <a href="#" class="item-cancel fa fa-times" :data-operation="item.confirming" @click.prevent="itemCancel"></a>
+        </span>
+        <span class="item-confirmation" v-if="item.confirming && item.confirming == 'uncompress'">
+            <label class="checkbox-label">
+                {{ translate('Overwrite files') }}
+                <input type="checkbox" v-model="fm.uncompressOverwrite" class="confirmation-input confirmation-checkbox-input uncompress-overwrite-input" />
+            </label>
+            <a href="#" class="item-confirm fa fa-check" :data-operation="item.confirming" @click.prevent="itemConfirm" @keydown.prevent.stop.esc="itemCancel"></a>
+            <a href="#" class="item-cancel fa fa-times" :data-operation="item.confirming" @click.prevent="itemCancel"></a>
+        </span>
+        <span class="item-busy" v-if="item.busy">
+            <span class="fa fa-circle-o-notch fa-spin"></span>
+        </span>
+    </div>
+    <transition name="size-height">
+        <div class="file-stat" v-if="item.showInfo">
+            <div v-for="(value, key) in item.info">
+                <span class="stat-name">{{ key }}</span>
+                <span class="stat-value">{{ value }}</span>
+            </div>
+        </div>
+    </transition>
+</div>

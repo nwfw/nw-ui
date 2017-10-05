@@ -1,0 +1,9 @@
+<li :class="['tree-item-wrapper', 'type-' + item.type, {'active-item': isActive(), 'active-parent': !isActive() && isOpen(), 'open-item': isOpen(), 'section-busy': fm.treeBusy}]">
+    <div @click="itemClick" :data-path="item.path" :data-type="item.type" class="file-manager-item tree-item">
+        <span :class="['fa', { 'fa-folder-open': isOpen(), 'fa-folder' : !isOpen()}]"></span>
+        <span class="item-name" v-html="item.name"></span>
+    </div>
+    <ul class="tree-item-children" v-if="item.children && item.children.length">
+        <file-manager-tree-item v-bind:instance-id="instanceId" v-bind:item-click="itemClick" v-bind:key="child.path" v-for="child in item.children" v-bind:item="child" />
+    </ul>
+</li>
