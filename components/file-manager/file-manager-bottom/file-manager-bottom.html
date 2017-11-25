@@ -1,0 +1,23 @@
+<div v-if="fm.settings.allowUploads" :class="['file-manager-section file-manager-bottom', {'upload-in-progress': fm.uploading}]">
+    <div class="upload-area drop-area">
+        <input type="file" :multiple="fm.settings.allowMultipleUploads" v-bind:accept="fm.settings.uploadTypes" name="file-manager-upload" :disabled="fm.uploading" @change="methods.filesChange" class="file-manager-uploader-input" />
+        <div class="drop-area-text drop-area-text-center" v-if="!fm.uploading">
+            <div class="drop-area-text-inner" v-html="translate('Drop file(s) or click here to upload')"></div>
+        </div>
+        <div class="drop-area-text drop-area-text-center" v-if="fm.uploading && !fm.uploadingPaused">
+            <div class="drop-area-text-inner" v-html="translate('Uploaded {1} of {2} files', '', [fm.uploadedFiles.length, fm.uploadingFiles.length])"></div>
+        </div>
+        <div class="drop-area-text" v-if="fm.uploading && fm.uploadingPaused && fm.fileExists">
+            <div class="drop-area-text-inner">
+                {{ translate('File "{1}"" already exists.', '', [fm.currentUploadName]) }}
+            </div>
+            <div class="drop-area-text-inner">
+                <a href="#" class="upload-action-link" @click.prevent="methods.confirmSkip" v-html="translate('Skip')"></a>
+                <a href="#" class="upload-action-link" @click.prevent="methods.confirmOverwrite" v-html="translate('Overwrite')"></a>
+                <a href="#" class="upload-action-link" @click.prevent="methods.confirmRename" v-html="translate('Auto-rename new file')"></a>
+                <label>{{ translate('Apply to all') }}<input type="checkbox" v-model="fm.uploadConfirmAll" /></label>
+                <a href="#" class="upload-action-link" @click.prevent="methods.cancelUpload" v-html="translate('Cancel')"></a>
+            </div>
+        </div>
+    </div>
+</div>

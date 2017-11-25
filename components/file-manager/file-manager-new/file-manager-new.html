@@ -1,0 +1,4 @@
+<div :class="['file-manager-section file-manager-new-file', {'form-errors': hasErrors()}]" v-if="fm.savingFile">
+    <label v-html="translate('New file name')"></label>
+    <input type="text" class="file-manager-new-file-name" v-model="fm.newFileName" :placeholder="translate('File name')" @keyup="checkErrors" @blur="checkErrors" />
+</div>

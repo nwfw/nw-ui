@@ -1,0 +1,172 @@
+<div class="file-manager-section file-manager-top">
+    <span class="file-manager-top-tools-section">
+        <span class="settings-icon-wrapper">
+            <a :class="['file-manager-settings-link fm-submenu-opener fm-submenu-element fa fa-cog', {'active-link': fm.settingsOpen}]" data-toggle="fm.settingsOpen" @mouseover="submenuMouseOver" @mouseout.self="submenuMouseOut"></a>
+        </span>
+        <transition name="size-height">
+            <div data-toggle="fm.settingsOpen" class="file-manager-settings top-tools-submenu fm-submenu-element" v-if="fm.settingsOpen" @mouseout.self="submenuMouseOut" @mouseover="submenuMouseOver">
+                <h2 v-html="translate('Settings')"></h2>
+                <div class="file-manager-settings-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" v-model="fm.config.showHiddenFiles" @change="methods.configChanged" />
+                        {{ translate('Show hidden items') }}
+                    </label>
+                </div>
+                <div class="file-manager-settings-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" v-model="fm.config.thumbnailView" @change="methods.configChanged" />
+                        {{ translate('Thumbnail view') }}
+                    </label>
+                </div>
+                <div class="file-manager-settings-row" v-if="fm.config.thumbnailView">
+                    <label>
+                        {{ translate('Thumbnail size') }}
+                    </label>
+                    <input type="range" :max="fm.settings.maxThumbnailSize" :min="fm.settings.minThumbnailSize" :step="fm.settings.thumbnailSizeStep" v-model="fm.config.currentThumbnailSize"  @change="methods.configChanged" />
+                </div>
+                <span v-if="methods.isConfigChanged()" class="top-tools-submenu-item top-tools-submenu-delimiter">
+                </span>
+                <div v-if="methods.isConfigChanged()" class="file-manager-settings-row">
+                    <a href="#" @click.prevent="methods.resetConfig" v-html="translate('Reset to default')"></a>
+                </div>
+            </div>
+        </transition>
+    </span>
+    <span class="file-manager-top-tools-section current-dir-wrapper">
+        <a :class="['level-up fa fa-level-up', {'disabled-link': fm.currentDir == fm.rootDir}]" :title="translate('Go up one level')" v-nwtooltip="1" @click.prevent="methods.levelUp"></a>
+        <span type="text" class="current-dir" v-html="fm.relativeCurrentDir" :title="fm.relativeCurrentDir" v-nwtooltip="1"></span>
+        <a class="refresh-link fa fa-refresh" :title="translate('Refresh')" v-nwtooltip="1" @click.prevent="methods.reload"></a>
+    </span>
+    <span class="file-manager-top-right">
+        <span v-if="fm.settings.allowDirCreation" class="file-manager-top-tools-section create-dir-wrapper">
+            <transition name="size-width">
+                <input class="new-dir" v-if="!fm.creatingDir && fm.createDirDialog" :placeholder="translate('New directory name')" v-model="fm.newDir" @keydown.prevent.enter="methods.createDir" @keydown.prevent.stop.esc="methods.exitCreateDir"/>
+            </transition>
+            <a :title="translate('Create directory')" v-nwtooltip="1" v-if="!fm.creatingDir" class="create-dir fa fa-folder" href="#" @click.prevent="methods.createDir"></a>
+            <span v-if="fm.creatingDir" class="fa fa-circle-o-notch fa-spin"></span>
+        </span>
+        <span v-if="fm.settings.allowSearch" class="file-manager-top-tools-section search-icon-wrapper">
+            <a :title="translate('Search')" v-nwtooltip="1" :class="['search-icon fa fa-search', {'active-link': fm.search}]" href="#" @click.prevent="methods.toggleSearch"></a>
+            <transition name="fade">
+                <div class="file-manager-search top-tools-submenu fm-submenu-element" v-if="fm.search">
+                    <span class="top-tools-submenu-item">
+                        <input v-model="fm.searchQuery" :placeholder="translate('Search')" class="fm-search-input" type="text" @keyup="methods.performSearch" @keydown.prevent.stop.esc="methods.exitSearch" />
+                        <a href="#" class="fa fa-times" @click.prevent="methods.exitSearch" :title="translate('Close search')" v-nwtooltip="1"></a>
+                    </span>
+                </div>
+            </transition>
+        </span>
+        <transition name="fade">
+            <span class="file-manager-top-tools-section clipboard-wrapper" v-if="fm.settings.allowClipboard && methods.getClipboardItems().length">
+                <a :title="translate('Paste {1} items', '', [methods.getClipboardItems().length])" v-nwtooltip="1" href="#" class="file-manager-top-tools-subsection paste-items" @click.prevent="methods.pasteItems">
+                    <span class="fa fa-clipboard"></span>
+                    <span class="cliboard-items-count" v-html="methods.getClipboardItems().length"></span>
+                </a>
+                <a :title="translate('View clipboard contents')" v-nwtooltip="1" href="#" :class="['file-manager-top-tools-subsection view-clipboard-items fm-submenu-opener fm-submenu-element fa fa-caret-down', {'active-link': fm.viewClipboardItems}]" data-toggle="fm.viewClipboardItems" @mouseover="submenuMouseOver" @mouseout.self="submenuMouseOut">
+                </a>
+                <transition name="size-height">
+                    <span data-toggle="fm.viewClipboardItems" class="top-tools-submenu fm-submenu-element clipboard-items" v-if="methods.getClipboardItems().length && fm.viewClipboardItems" @mouseout.self="submenuMouseOut" @mouseover="submenuMouseOver">
+                        <transition name="size-height">
+                            <div class="top-tools-file-list copied-items" v-if="fm.copyItems.length">
+                                <h2 v-html="translate('Copied items')"></h2>
+                                <transition-group name="size-height" mode="out-in" tag="div" class="clipboard-item-list-inner">
+                                    <div v-for="cbItem in fm.copyItems" v-bind:key="cbItem.path" class="top-tools-submenu-item top-tools-file-list-item file-manager-item" :data-path="cbItem.path" :data-type="cbItem.type" @click.prevent="methods.findItem" :title="translate('Click to find item in its directory')">
+                                        <span :class="['item-type fa', {'fa-folder': cbItem.type == 'dir', 'fa-file' : cbItem.type == 'file'}]"></span>
+                                        <span class="item-name" v-html="cbItem.name"></span>
+                                        <a href="#" class="remove-top-tools-file-list-item fa fa-times" @click.prevent="methods.removeClipboardItem" :title="translate('Remove item from clipboard')" v-nwtooltip="1"></a>
+                                    </div>
+                                </transition-group>
+                            </div>
+                        </transition>
+                        <transition name="size-height">
+                            <div class="top-tools-file-list cut-items" v-if="fm.cutItems.length">
+                                <h2 v-html="translate('Cut items')"></h2>
+                                <transition-group name="size-height" mode="out-in" tag="div" class="clipboard-item-list-inner">
+                                    <div v-for="cbItem in fm.cutItems" v-bind:key="cbItem.path" class="top-tools-submenu-item top-tools-file-list-item file-manager-item" :data-path="cbItem.path" :data-type="cbItem.type" @click.prevent="methods.findItem" :title="translate('Click to find item in its directory')">
+                                        <span :class="['item-type fa', {'fa-folder': cbItem.type == 'dir', 'fa-file' : cbItem.type == 'file'}]"></span>
+                                        <span class="item-name" v-html="cbItem.name"></span>
+                                        <a href="#" class="remove-top-tools-file-list-item fa fa-times" @click.prevent="methods.removeClipboardItem" :title="translate('Remove item from clipboard')" v-nwtooltip="1"></a>
+                                    </div>
+                                </transition-group>
+                            </div>
+                        </transition>
+                    </span>
+                </transition>
+                <a href="#" :title="translate('Clear {1} items from clipboard', '', [methods.getClipboardItems().length])" v-nwtooltip="1" class="file-manager-top-tools-subsection clear-clipboard" @click.prevent="methods.clearClipboard">
+                    <span class="fa fa-times"></span>
+                </a>
+            </span>
+        </transition>
+        <span v-if="fm.settings.allowSelecting" :class="['file-manager-top-tools-section selection-wrapper', {'has-selected-files': fm.selectedFiles.length}]">
+            <transition name="size-height">
+                <div data-toggle="fm.massOperationsVisible" v-if="fm.selectedFiles.length && fm.massOperationsVisible" class="top-tools-submenu fm-submenu-element mass-operations-menu" @mouseout.self="submenuMouseOut" @mouseover="submenuMouseOver">
+                    <h2 v-html="translate('{1} files selected', '', [fm.selectedFiles.length])"></h2>
+                    <span class="top-tools-submenu-item" v-if="fm.settings.allowDelete">
+                        <a href="#" class="mass-operation-link delete-item" data-operation="delete" @click.self.stop.prevent="methods.massItemOperation">
+                            <span class="fa fa-trash"></span>
+                            {{ translate('Delete') }}
+                        </a>
+                        <span class="item-confirmation" v-if="fm.massOperationConfirming && fm.massOperationConfirming == 'delete'">
+                            {{ translate('Are you sure') }}?
+                            <a href="#" class="item-confirm fa fa-check" :data-operation="fm.massOperationConfirming" @click.prevent="methods.massItemConfirm" @keydown.prevent.stop.esc="methods.massItemCancel"></a>
+                            <a href="#" class="item-cancel fa fa-times" :data-operation="fm.massOperationConfirming" @click.prevent="methods.massItemCancel"></a>
+                        </span>
+                    </span>
+                    <span class="top-tools-submenu-item" v-if="fm.settings.allowClipboard">
+                        <a href="#" class="mass-operation-link copy-item" data-operation="copy" @click.self.stop.prevent="methods.massItemOperation">
+                            <span class="fa fa-files-o"></span>
+                            {{ translate('Copy') }}
+                        </a>
+                    </span>
+                    <span class="top-tools-submenu-item" v-if="fm.settings.allowClipboard">
+                        <a href="#" class="mass-operation-link cut-item" data-operation="cut" @click.self.stop.prevent="methods.massItemOperation">
+                            <span class="fa fa-cut"></span>
+                            {{ translate('Cut') }}
+                        </a>
+                    </span>
+                    <span class="top-tools-submenu-item top-tools-submenu-delimiter" v-if="fm.settings.allowClipboard || fm.settings.allowDelete">
+                    </span>
+                    <span class="top-tools-submenu-item" v-if="fm.settings.allowCompression">
+                        <a href="#" class="mass-operation-link compress-item" data-operation="compress" @click.self.stop.prevent="methods.massItemOperation">
+                            <span class="fa fa-compress"></span>
+                            {{ translate('Compress') }}
+                        </a>
+                        <span class="item-confirmation" v-if="fm.massOperationConfirming && fm.massOperationConfirming == 'compress'">
+                            <label v-html="translate('Archive name')"></label> <input v-model="fm.archiveName" type="text" class="confirmation-input confirmation-text-input archive-name-input" @keydown.prevent.stop.esc="methods.massItemCancel" @keydown.prevent.stop.enter="methods.massItemConfirm" />
+                            <a href="#" class="item-confirm fa fa-check" :data-operation="fm.massOperationConfirming" @click.prevent="methods.massItemConfirm" @keydown.prevent.stop.esc="methods.massItemCancel"></a>
+                            <a href="#" class="item-cancel fa fa-times" :data-operation="fm.massOperationConfirming" @click.prevent="methods.massItemCancel"></a>
+                        </span>
+                    </span>
+                    <span class="top-tools-submenu-item top-tools-submenu-delimiter" v-if="fm.settings.allowCompression">
+                    </span>
+                    <span class="top-tools-submenu-item">
+                        <a href="#" class="mass-operation-link toggle-selected-list" @click.self.stop.prevent="toggleSelectedList">
+                            <template v-if="!fm.viewSelectedItems">
+                                {{ translate('View files') }}
+                            </template>
+                            <template v-else>
+                                {{ translate('Hide files') }}
+                            </template>
+                        </a>
+                    </span>
+                    <span class="top-tools-submenu-selected-files-list">
+                        <transition name="size-height">
+                            <div class="top-tools-file-list" v-if="fm.viewSelectedItems">
+                                <div v-for="item in fm.selectedFiles" v-bind:key="item.path" class="top-tools-submenu-item top-tools-file-list-item file-manager-item" :data-path="item.path" :data-type="item.type" @click.prevent="methods.findItem" :title="translate('Click to find item in its directory')">
+                                    <span :class="['item-type fa', {'fa-folder': item.type == 'dir', 'fa-file' : item.type == 'file'}]"></span>
+                                    <span class="item-name" v-html="item.name"></span>
+                                    <a href="#" class="deselect-item fa fa-times" @click.self.stop.prevent="methods.selectItem" :title="translate('Deselect item')" v-nwtooltip="1"></a>
+                                </div>
+                            </div>
+                        </transition>
+                    </span>
+                </div>
+            </transition>
+            <a :class="['file-manager-top-tools-subsection fa', {'fa-check-square': fm.selectMode, 'fa-check-square-o': !fm.selectMode}]" :title="translate('Toggle select mode')" v-nwtooltip="1" @click.prevent="methods.toggleSelectMode"></a>
+            <span :class="['file-manager-top-tools-subsection selected-files', {'element-placeholder': !fm.selectMode}]" v-html="fm.selectedFiles.length"></span>
+            <a :class="['file-manager-top-tools-subsection fa fa-times', {'element-placeholder': !fm.selectedFiles.length}]" :title="translate('Deselect all')" v-nwtooltip="1" @click.prevent="methods.deselectAll"></a>
+            <span :class="['file-manager-top-tools-subsection toggle-mass-operations fm-submenu-opener fm-submenu-element fa fa-caret-down', {'active-link': fm.massOperationsVisible, 'element-placeholder': (!fm.selectMode || fm.selectedFiles.length == 0)}]" data-toggle="fm.massOperationsVisible" @mouseover="submenuMouseOver" @mouseout.self="submenuMouseOut"></span>
+            <a href="#" :class="['file-manager-top-tools-subsection toggle-selected fa', {'fa-check-square-o': methods.areAllSelected(), 'fa-square-o': !methods.areAllSelected(), 'element-placeholder': (!fm.selectMode || fm.currentFileList.length == 0)}]" @click.prevent="methods.toggleSelectAll"></a>
+        </span>
+    </span>
+</div>

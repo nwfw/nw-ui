@@ -1,0 +1,12 @@
+<span :class="['item-tools', {'element-placeholder': !item.mutable}]" v-if="!fm.settings.hideActions">
+    <a href="#" v-nwtooltip="1" :title="translate('Save')" v-if="fm.settings.allowDownloads && item.type == 'file'" class="item-operation-link download-item fa fa-download" @click.self.stop.prevent="methods.downloadFile"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Compress')" v-if="fm.settings.allowCompression && !item.archive && item.mutable" class="item-operation-link compress-item fa fa-compress" data-operation="compress" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Uncompress')" v-if="fm.settings.allowCompression && item.archive && item.mutable" class="item-operation-link uncompress-item fa fa-expand" data-operation="uncompress" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Info')" class="item-operation-link item-info-toggle fa fa-info-circle" @click.self.stop.prevent="toggleInfo"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Open')" v-if="fm.settings.allowOpen" class="item-operation-link view-file fa fa-eye" @click.self.stop.prevent="methods.openFile"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Delete')" v-if="fm.settings.allowDelete" class="item-operation-link delete-item fa fa-trash" data-operation="delete" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Rename')" v-if="fm.settings.allowRename" class="item-operation-link rename-item fa fa-keyboard-o" data-operation="rename" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Copy')" v-if="fm.settings.allowClipboard" :class="['item-operation-link copy-item fa fa-files-o', {'active-link': methods.isCopiedItem(item)}]" data-operation="copy" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-nwtooltip="1" :title="translate('Cut')" v-if="fm.settings.allowClipboard" :class="['item-operation-link cut-item fa fa-cut', {'active-link': methods.isCutItem(item)}]" data-operation="cut" @click.self.stop.prevent="methods.itemOperation"></a>
+    <a href="#" v-if="showSelect" v-nwtooltip="1" :title="translate('Select')" :class="['item-operation-link select-item fa', {'fa-check-square-o': methods.isSelectedItem(item), 'fa-square-o': !methods.isSelectedItem(item), 'element-placeholder': !fm.selectMode}]" data-operation="select" @click.self.stop.prevent="methods.itemOperation"></a>
+</span>

@@ -9,6 +9,60 @@ exports.appState = {
     fileManagerProtoData: {
         instanceId: '',
 
+        settings:{
+            allowDirCreation: true,
+            allowSearch: true,
+
+            allowSelecting: true,
+            allowSelectingFiles: true,
+            allowSelectingDirectories: true,
+            maxSelectedItems: 0,
+
+            listDirectories: true,
+            listFiles: true,
+
+            hideActions: false,
+
+            allowDownloads: true,
+
+            allowOpen: true,
+
+            allowUploads: true,
+            allowMultipleUploads: true,
+            uploadTypes: '*/*',
+
+            allowClipboard: true,
+
+            allowRename: true,
+            allowDelete: true,
+
+            allowCompression: true,
+
+            showTree: true,
+            scrollTree: true,
+            scrollTreeDuration: 600,
+
+            minThumbnailSize: 1,
+            maxThumbnailSize: 10,
+            thumbnailSizeStep: 0.1,
+
+            operationDelay: 20,
+            stepDelay: 10,
+            uploadDelay: 300,
+
+            listTimeoutDuration: 100,
+            treeTimeoutDuration: 250,
+            searchTimeoutDuration: 200,
+            itemTransitionDuration: 25,
+
+            maxBottomItems: 5,
+        },
+        config: {
+            thumbnailView: false,
+            currentThumbnailSize: 2.5,
+            showHiddenFiles: false,
+        },
+
         rootElement: null,
 
         settingsOpen: false,
@@ -38,6 +92,8 @@ exports.appState = {
 
         selectMode: false,
         selectedFiles: [],
+        initialSelectedPaths: [],
+        initialSelectedItems: [],
 
         imagePreview: false,
         imagePreviewSrc: '',
@@ -66,12 +122,8 @@ exports.appState = {
         cutItems: [],
         viewClipboardItems: false,
 
-        allowDownloads: true,
         downloadingFile: '',
 
-        allowUploads: true,
-        allowMultipleUploads: true,
-        uploadTypes: '*/*',
         uploading: false,
         uploadingFiles: [],
         uploadedFiles: [],
@@ -99,8 +151,37 @@ exports.appState = {
         timeouts: {
             tree: null,
             list: null,
-            search: null
+            search: null,
+            itemClick: null,
         },
+
+        defaultItem: {
+            name: '',
+            extension: '',
+            identifier: '',
+            newName: '',
+            path: '',
+            type: null,
+            image: false,
+            info: {},
+            showInfo: false,
+            mutable: true,
+            busy: false,
+            renaming: false,
+            confirming: '',
+            confirmed: false,
+            highlighted: false,
+            selected: false,
+            archive: false,
+            clickCount: 0,
+        },
+
+        confirmCallback: null,
+
+        savingFile: false,
+        newFileName: null,
+        newFileNameMatch: /.*/,
+
     },
     appModals: {
         fileManagerModal: {

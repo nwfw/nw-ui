@@ -35,7 +35,7 @@ exports.component = {
         if (appState.modalData.currentModal && appState.modalData.currentModal.treeData){
             data.fm = appState.modalData.currentModal;
         } else if (this.options && _.isObject(this.options)){
-            data.fm = _.merge(appState.fileManagerProtoData, this.options);
+            data.fm = _.merge(_.cloneDeep(appState.fileManagerProtoData), this.options);
         } else {
             data.fm = _.cloneDeep(appState.fileManagerProtoData);
         }
@@ -51,7 +51,11 @@ exports.component = {
             this.instanceId = data.fm.instanceId;
         }
 
-        data.fm.settings = _appWrapper.getConfig('appConfig.fileManager');
+        if (!(data.fm.config && _.isObject(data.fm.config))){
+            data.fm.config = {};
+        }
+        data.fm.config = _.defaultsDeep(_appWrapper.getConfig('appConfig.fileManager.config'), data.fm.config);
+
         appState.fileManagerInstances[this.instanceId] = data;
         appState.fileManagerInstancesCache[this.instanceId] = _.cloneDeep(appState.fileManagerProtoCache);
         return appState.fileManagerInstances[this.instanceId];
@@ -59,10 +63,9 @@ exports.component = {
     created: async function(){
         this.helper = _appWrapper.app.fileManagerHelper;
         this.fm.fmBusy = true;
-        this.fm.timeouts = {
-            tree: null,
-            list: null
-        };
+        this.fm.timeouts.tree = null;
+        this.fm.timeouts.list = null;
+        this.fm.timeouts.itemClick = null;
         if (!this.fm.rootDir){
             this.fm.rootDir = path.resolve('/');
         } else {
@@ -82,6 +85,31 @@ exports.component = {
             this.fm.currentDir = this.fm.rootDir;
         }
         this.fm.relativeCurrentDir = path.join('/', path.relative(path.dirname(this.fm.rootDir), this.fm.currentDir));
+
+        if (this.fm.initialSelectedItems && this.fm.initialSelectedItems.length){
+            this.fm.selectMode = true;
+            this.fm.selectedFiles = _.cloneDeep(this.fm.initialSelectedItems);
+        } else if (this.fm.initialSelectedPaths && this.fm.initialSelectedPaths.length){
+            this.fm.initialSelectedItems = [];
+            for (let i=0; i<this.fm.initialSelectedPaths.length; i++){
+                let item;
+                try {
+                    item = await this.helper.getListItem(this.fm.initialSelectedPaths[i]);
+                } catch (ex) {
+                    _appWrapper.getHelper('fileManager').log('Failed getting pre-selected item data for path "{1}"!', 'warning', [this.fm.initialSelectedPaths[i]]);
+                }
+                if (item && item.path){
+                    this.fm.initialSelectedItems.push(item);
+                }
+            }
+            this.fm.initialSelectedPaths = [];
+        }
+
+        if (this.fm.initialSelectedItems && this.fm.initialSelectedItems.length){
+            this.fm.selectMode = true;
+            this.fm.selectedFiles = _.cloneDeep(this.fm.initialSelectedItems);
+        }
+
         await this.helper.loadTree(this.instanceId);
         if (this.fm.settings.operationDelay){
             await _appWrapper.wait(this.fm.settings.operationDelay);
@@ -133,22 +161,56 @@ exports.component = {
                 this.exitSearch();
             }
         },
-        itemClick: function(e){
-            let {type, itemPath} = this.getItemElementData(e.target);
-            if (type && itemPath){
-                let item = this.helper.findListItemPath(this.instanceId, itemPath);
+        treeItemClick: async function(e, item){
+            if (item && item.path){
+                this.closeAllSubmenus();
+                this.selectDir(item.path);
+            }
+        },
+        itemClick: async function(e, item){
+            if (item){
+                clearTimeout(this.fm.timeouts.itemClick);
+                item.clickCount++;
+                this.fm.timeouts.itemClick = setTimeout(() => {
+                    this.handleItemClick(e, item);
+                }, 50);
+            }
+        },
+        handleItemClick: async function(e, item) {
+            clearTimeout(this.fm.timeouts.itemClick);
+            if (item && !item.busy){
                 if (e.shiftKey){
-                    if (item){
-                        this.fm.selectMode = true;
-                        if (!_.find(this.fm.selectedFiles, {path: itemPath})){
-                            this.selectPath(itemPath);
-                        } else {
-                            this.deselectPath(itemPath);
+                    if (this.helper.canSelect(this.instanceId)){
+                        let doSelect = item.mutable;
+                        if (item.type == 'dir' && !this.fm.settings.allowSelectingDirectories){
+                            doSelect = false;
+                        } else if (item.type == 'file' && !this.fm.settings.allowSelectingFiles){
+                            doSelect = false;
                         }
+                        if (doSelect){
+                            this.closeAllSubmenus();
+                            this.fm.selectMode = true;
+                            if (!_.find(this.fm.selectedFiles, {path: item.path})){
+                                this.selectPath(item.path);
+                            } else {
+                                this.deselectPath(item.path);
+                            }
+                        }
+                    } else if (this.helper.isMaxSelected(this.instanceId)){
+                        _appWrapper.addNotification(_appWrapper.translate('You can\'t select more than {1} items.', '', [this.fm.settings.maxSelectedItems]), 'warning');
                     }
+                    item.clickCount = 0;
                 } else {
-                    if (type == 'dir'){
-                        this.selectDir(itemPath);
+                    if (item.clickCount >= 2) {
+                        item.clickCount = 0;
+                        if (item.type == 'dir'){
+                            this.closeAllSubmenus();
+                            this.selectDir(item.path);
+                        } else if (item.type == 'file'){
+                            if (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback)){
+                                this.fm.confirmCallback([item]);
+                            }
+                        }
                     }
                 }
             }
@@ -334,18 +396,7 @@ exports.component = {
             return this.helper.isSelectedItem(this.instanceId, item);
         },
         getDirUpItem: function(){
-            return {
-                name: '..',
-                newName: '..',
-                path: path.resolve(path.join(this.fm.currentDir, '..')),
-                type: 'dir',
-                mutable: false,
-                busy: false,
-                renaming: false,
-                confirming: '',
-                confirmed: false,
-                selected: false,
-            };
+            return this.helper.getDirUpItem(this.instanceId);
         },
         uploadFile: async function (){
             return await this.helper.uploadFile(this.instanceId);
@@ -371,21 +422,31 @@ exports.component = {
             }
         },
         selectItem: async function(e) {
-            let {type, itemPath} = this.getItemElementData(e.target);
-            if (type && itemPath){
-                let item = await this.helper.getListItem(itemPath);
-                if (item){
-                    if (!_.find(this.fm.selectedFiles, {path: itemPath})){
-                        this.fm.selectedFiles.push(item);
-                    } else {
-                        this.fm.selectedFiles = _.filter(this.fm.selectedFiles, (item) => {
-                            return item.path != itemPath;
-                        });
+            if (this.helper.canSelect(this.instanceId)){
+                let {type, itemPath} = this.getItemElementData(e.target);
+                if (type && itemPath){
+                    let item = await this.helper.getListItem(itemPath);
+                    if (item){
+                        let doSelect = item.mutable;
+                        if (item.type == 'dir' && !this.fm.settings.allowSelectingDirectories){
+                            doSelect = false;
+                        } else if (item.type == 'file' && !this.fm.settings.allowSelectingFiles){
+                            doSelect = false;
+                        }
+                        if (doSelect){
+                            if (!_.find(this.fm.selectedFiles, {path: itemPath})){
+                                this.fm.selectedFiles.push(item);
+                            } else {
+                                this.fm.selectedFiles = _.filter(this.fm.selectedFiles, (item) => {
+                                    return item.path != itemPath;
+                                });
+                            }
+                        }
                     }
                 }
-            }
-            if (!this.fm.selectedFiles.length){
-                this.fm.massOperationsVisible = false;
+                if (!this.fm.selectedFiles.length){
+                    this.fm.massOperationsVisible = false;
+                }
             }
         },
         selectPath: async function(itemPath) {
@@ -402,8 +463,12 @@ exports.component = {
             let total = this.fm.currentFileList.length;
             for (let i=0; i<total; i++){
                 let item = this.fm.currentFileList[i];
-                if (_.find(this.fm.selectedFiles, {path: item.path})){
-                    selected++;
+                if (item.mutable){
+                    if (_.find(this.fm.selectedFiles, {path: item.path})){
+                        selected++;
+                    }
+                } else {
+                    total--;
                 }
             }
             return selected >= total;
@@ -412,15 +477,17 @@ exports.component = {
             let allSelected = this.areAllSelected();
             for (let i=0; i<this.fm.currentFileList.length; i++){
                 let item = this.fm.currentFileList[i];
-                if (!allSelected){
-                    if (!_.find(this.fm.selectedFiles, {path: item.path})){
-                        this.fm.selectedFiles.push(item);
-                    }
-                } else {
-                    if (_.find(this.fm.selectedFiles, {path: item.path})){
-                        this.fm.selectedFiles = _.filter(this.fm.selectedFiles, (selectedItem) => {
-                            return item.path != selectedItem.path;
-                        });
+                if (item.mutable){
+                    if (!allSelected){
+                        if (!_.find(this.fm.selectedFiles, {path: item.path})){
+                            this.fm.selectedFiles.push(item);
+                        }
+                    } else {
+                        if (_.find(this.fm.selectedFiles, {path: item.path})){
+                            this.fm.selectedFiles = _.filter(this.fm.selectedFiles, (selectedItem) => {
+                                return item.path != selectedItem.path;
+                            });
+                        }
                     }
                 }
             }
@@ -552,9 +619,9 @@ exports.component = {
             this.fm.filePreview = false;
         },
         getThumbFontSize: function(){
-            if (this.fm.settings.thumbnailView){
+            if (this.fm.config.thumbnailView){
                 return {
-                    'font-size': this.fm.settings.currentThumbnailSize + 'rem'
+                    'font-size': this.fm.config.currentThumbnailSize + 'rem'
                 };
             } else {
                 return {};
@@ -562,7 +629,7 @@ exports.component = {
         },
         getThumbWidth: function(){
             return {
-                'width': (this.fm.settings.currentThumbnailSize * 3) + 'rem'
+                'width': (this.fm.config.currentThumbnailSize * 3) + 'rem'
             };
         },
         toggleSearch: function(){
@@ -596,7 +663,7 @@ exports.component = {
         },
         getListComponent: function(){
             let component = 'file-manager-list-item';
-            if (this.fm.settings.thumbnailView){
+            if (this.fm.config.thumbnailView){
                 component = 'file-manager-thumb-item';
             }
             return component;
@@ -608,18 +675,130 @@ exports.component = {
                 eligible = file.name.match(new RegExp(utilHelper.quoteRegex(this.fm.searchQuery), 'i'));
             }
             return eligible;
+        },
+        configChanged: function(){
+            _appWrapper.setConfig('appConfig.fileManager.config', this.fm.config);
+        },
+        isConfigChanged: function(){
+            return !_.isEqual(appState.fileManagerProtoData.config, this.fm.config);
+        },
+        resetConfig: function(){
+            this.fm.config = _.cloneDeep(appState.fileManagerProtoData.config);
+            this.configChanged();
+        },
+        closeAllSubmenus: function(){
+            this.fm.settingsOpen = false;
+            this.fm.viewClipboardItems = false;
+            this.fm.massOperationsVisible = false;
+        },
+        fileManagerConfirm: function() {
+            let result;
+            let values = [];
+            if (this.fm.selectedFiles.length){
+                values = this.fm.selectedFiles;
+            }
+            if (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback)){
+                result = this.fm.confirmCallback(values);
+            } else {
+                _appWrapper.getHelper('fileManager').log('No confirm callback for file manager "{1}"!', 'warning', [this.instanceId]);
+            }
+            return result;
+        },
+        fileManagerConfirmItem: function(item) {
+            let values = [];
+            let result;
+            if (item && item.path){
+                values.push(item);
+            }
+            if (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback)){
+                result = this.fm.confirmCallback(values);
+            } else {
+                _appWrapper.getHelper('fileManager').log('No item confirm callback for file manager "{1}"!', 'warning', [this.instanceId]);
+            }
+            return result;
         }
     },
     computed: {
         appState: function(){
             return appState;
         },
+        fmTopMethods: function(){
+            return {
+                deselectAll: this.deselectAll,
+                reload: this.reload,
+                levelUp: this.levelUp,
+                createDir: this.createDir,
+                exitCreateDir: this.exitCreateDir,
+                toggleSelectMode: this.toggleSelectMode,
+                selectItem: this.selectItem,
+                areAllSelected: this.areAllSelected,
+                toggleSelectAll: this.toggleSelectAll,
+                massItemOperation: this.massItemOperation,
+                findItem: this.findItem,
+                pasteItems: this.pasteItems,
+                clearClipboard: this.clearClipboard,
+                getClipboardItems: this.getClipboardItems,
+                removeClipboardItem: this.removeClipboardItem,
+                massItemConfirm: this.massItemConfirm,
+                massItemCancel: this.massItemCancel,
+                configChanged: this.configChanged,
+                isConfigChanged: this.isConfigChanged,
+                toggleSearch: this.toggleSearch,
+                performSearch: this.performSearch,
+                resetConfig: this.resetConfig,
+                exitSearch: this.exitSearch,
+            };
+        },
+        fmBottomMethods: function() {
+            return {
+                filesChange: this.filesChange,
+                confirmSkip: this.confirmSkip,
+                confirmOverwrite: this.confirmOverwrite,
+                confirmRename: this.confirmRename,
+                cancelUpload: this.cancelUpload,
+            };
+        },
+        fmNewMethods: function(){
+            return {};
+        },
+        fmButtonsMethods: function() {
+            return {
+                fileManagerConfirm: this.fileManagerConfirm,
+            };
+        },
+        fmTreeMethods: function(){
+            return {
+                itemClick: this.treeItemClick,
+            };
+        },
+        fmListMethods: function(){
+            return {
+                getThumbFontSize: this.getThumbFontSize,
+                isEligible: this.isEligible,
+                getListComponent: this.getListComponent,
+                openFile: this.openFile,
+                downloadFile: this.downloadFile,
+                listItemReset: this.listItemReset,
+                itemClick: this.itemClick,
+                itemOperation: this.itemOperation,
+                itemConfirm: this.itemConfirm,
+                itemCancel: this.itemCancel,
+                isSelectedItem: this.isSelectedItem,
+                isCopiedItem: this.isCopiedItem,
+                isCutItem: this.isCutItem,
+                isOnClipboardItem: this.isOnClipboardItem,
+                getItemIconClass: this.getItemIconClass,
+                zoomImage: this.zoomImage,
+                getThumbWidth: this.getThumbWidth,
+                fileManagerConfirmItem: this.fileManagerConfirmItem,
+            };
+        }
     },
     watch: {
         'fm.currentDir': async function(){
             await this.refresh();
         },
-        'fm.settings.showHiddenFiles': async function(){
+        'fm.config.showHiddenFiles': async function(){
             await this.refresh();
         },
     }

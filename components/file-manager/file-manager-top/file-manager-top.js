@@ -28,26 +28,7 @@ exports.component = {
     template: '',
     props: [
         'instanceId',
-        'deselectAll',
-        'reload',
-        'levelUp',
-        'createDir',
-        'exitCreateDir',
-        'toggleSelectMode',
-        'selectItem',
-        'areAllSelected',
-        'toggleSelectAll',
-        'massItemOperation',
-        'findItem',
-        'pasteItems',
-        'clearClipboard',
-        'getClipboardItems',
-        'removeClipboardItem',
-        'massItemConfirm',
-        'massItemCancel',
-        'toggleSearch',
-        'performSearch',
-        'exitSearch',
+        'methods'
     ],
     data: function () {
         return appState.fileManagerInstances[this.instanceId];

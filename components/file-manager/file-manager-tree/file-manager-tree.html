@@ -1,0 +1,6 @@
+<ul v-if="fm.settings.showTree" class="file-manager-tree">
+    <file-manager-tree-item v-bind:instance-id="fm.instanceId" v-bind:methods="methods" v-bind:item="fm.treeData" />
+    <transition name="fade-fast">
+        <svg-circular-progress v-if="fm.treeBusy" v-bind:circular-progress-data="fm.fmTreeProgress"></svg-circular-progress>
+    </transition>
+</ul>

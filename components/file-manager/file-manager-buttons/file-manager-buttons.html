@@ -1,0 +1,16 @@
+<div class="file-manager-section file-manager-buttons" v-if="canConfirm()">
+    <div class="file-manager-buttons-left">
+        <div class="file-manager-buttons-left-list" v-if="fm.selectedFiles.length > 0 && fm.selectedFiles.length <= fm.settings.maxBottomItems">
+            <span v-for="item in fm.selectedFiles" v-bind:key="item.path" :title="item.path" v-nwtooltip="1" class="file-manager-buttons-item file-manager-item">
+                <span :class="['item-type fa', {'fa-folder': item.type == 'dir', 'fa-file' : item.type == 'file'}]"></span>
+                <span class="item-name" v-html="item.name"></span>
+            </span>
+        </div>
+        <span class="file-manager-buttons-left-count" v-else>
+            <span v-html="translate('{1} items', '', [fm.selectedFiles.length])" :title="getSelectedFilePaths()" v-nwtooltip="{classes: ['align-right']}"></span>
+        </span>
+    </div>
+    <div class="file-manager-buttons-right">
+        <input type="button" class="file-manager-button file-manager-confirm-button" :value="translate('Confirm')" @click="methods.fileManagerConfirm" />
+    </div>
+</div>

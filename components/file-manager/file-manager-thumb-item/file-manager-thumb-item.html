@@ -1,0 +1,50 @@
+<div @click="itemClick" v-bind:style="methods.getThumbWidth()" :class="['file-item file-manager-item', 'type-' + item.type, {'file-manager-item-busy': item.busy, 'file-manager-item-confirming': item.confirming, 'item-selected': methods.isSelectedItem(item), 'item-highlighted': item.highlighted, 'image-item': item.image, 'section-busy': fm.fileListBusy}]" :data-path="item.path" :data-type="item.type" v-bind:data-index="index">
+    <div class="file-item-thumb">
+        <span class="item-info">
+            <span v-if="item.image" class="item-icon">
+                <a :title="translate('Expand image')" v-nwtooltip="1" v-if="item.image" class="zoom-image fa fa-search-plus" :data-image="'file://' + item.path" href="#" @click.self.stop.prevent="methods.zoomImage"></a>
+                <span class="item-image">
+                    <img :src="'file://' + item.path" :alt="item.name" />
+                </span>
+            </span>
+            <span v-else :class="['item-icon fa', {'fa-folder': item.type == 'dir', 'fa-file' : item.type == 'file'}, fileIconClass]"></span>
+            <span v-if="!item.renaming" class="item-name" v-html="item.name" :title="item.name"  v-nwtooltip="1"></span>
+            <input v-else class="item-name-input" v-model="item.newName" type="text" data-operation='rename' @keydown.prevent.enter="methods.itemOperation" @keydown.prevent.stop.esc="methods.listItemReset" />
+        </span>
+        <transition name="size-height">
+            <div class="file-stat" v-if="item.showInfo">
+                <h2>
+                    {{ translate('Info') }}
+                    <a :title="translate('Hide info')" v-nwtooltip="1" class="hide-stat fa fa-times" href="#" @click.self.stop.prevent="toggleInfo"></a>
+                </h2>
+
+                <div v-for="(value, key) in item.info">
+                    <span class="stat-name">{{ key }}</span>
+                    <span class="stat-value">{{ value }}</span>
+                </div>
+            </div>
+        </transition>
+        <file-manager-item-tools v-bind:show-select="false" v-bind:item="item" v-bind:instance-id="instanceId" v-bind:methods="methods"></file-manager-item-tools>
+        <a href="#" v-if="item.mutable" :title="translate('Select')" v-nwtooltip="1" :class="['item-operation-link select-item fa', {'fa-check-square-o': methods.isSelectedItem(item), 'fa-square-o': !methods.isSelectedItem(item), 'element-placeholder': !fm.selectMode}]" data-operation="select" @click.self.stop.prevent="methods.itemOperation"></a>
+        <span class="item-confirmation" v-if="item.confirming && item.confirming == 'delete' || item.confirming == 'rename'">
+            {{ translate('Are you sure') }}?
+            <span class="confirmation-links">
+                <a href="#" class="item-confirm fa fa-check" :data-operation="item.confirming" @click.prevent="methods.itemConfirm" @keydown.prevent.stop.esc="methods.itemCancel"></a>
+                <a href="#" class="item-cancel fa fa-times" :data-operation="item.confirming" @click.prevent="methods.itemCancel"></a>
+            </span>
+        </span>
+        <span class="item-confirmation" v-if="item.confirming && item.confirming == 'uncompress'">
+            <label class="checkbox-label">
+                {{ translate('Overwrite files') }}
+                <input type="checkbox" v-model="fm.uncompressOverwrite" class="confirmation-input confirmation-checkbox-input uncompress-overwrite-input" />
+            </label>
+            <span class="confirmation-links">
+                <a href="#" class="item-confirm fa fa-check" :data-operation="item.confirming" @click.prevent="methods.itemConfirm" @keydown.prevent.stop.esc="methods.itemCancel"></a>
+                <a href="#" class="item-cancel fa fa-times" :data-operation="item.confirming" @click.prevent="methods.itemCancel"></a>
+            </span>
+        </span>
+        <span class="item-busy" v-if="item.busy">
+            <span class="fa fa-circle-o-notch fa-spin"></span>
+        </span>
+    </div>
+</div>

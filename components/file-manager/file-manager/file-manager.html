@@ -1,0 +1,30 @@
+<div :class="['file-manager', {'file-manager-busy': fm.fmBusy, 'file-manager-settings-open': fm.settingsOpen}]">
+    <file-manager-new v-bind:instance-id="instanceId" v-bind:methods="fmNewMethods"></file-manager-new>
+    <file-manager-top v-bind:instance-id="fm.instanceId" v-bind:methods="fmTopMethods"></file-manager-top>
+    <div class="file-manager-section file-manager-main">
+        <input class="download-file-input" type="file" nwsaveas v-on:change="doDownloadFile" />
+        <file-manager-tree v-bind:instance-id="fm.instanceId" v-bind:methods="fmTreeMethods"></file-manager-tree>
+        <file-manager-list v-bind:instance-id="fm.instanceId" v-bind:methods="fmListMethods"></file-manager-list>
+        <transition name="size-longest">
+            <div class="file-manager-image-preview" v-if="fm.config.thumbnailView && fm.imagePreview">
+                <div class="file-manager-image-preview-wrapper">
+                    <img :src="fm.imagePreviewSrc" :alt="basename(fm.imagePreviewSrc)" />
+                </div>
+                <p class="file-manager-image-preview-caption" v-html="basename(fm.imagePreviewSrc)"></p>
+                <a href="#" class="image-preview-close fa fa-times" @click.prevent="removeImagePreview" @keydown.prevent.stop.esc="removeImagePreview"></a>
+            </div>
+        </transition>
+        <transition name="fade">
+            <div class="file-manager-file-preview" v-if="fm.filePreview">
+                <h2 v-html="translate('File preview')"></h2>
+                <div class="file-manager-file-preview-top">
+                    {{ fm.filePreviewPath }}
+                    <a href="#" class="file-preview-close fa fa-times" @click.prevent="removeFilePreview" @keydown.prevent.stop.esc="removeFilePreview"></a>
+                </div>
+                <file-viewer v-bind:options="{file: fm.filePreviewPath, mode: fm.filePreviewMode, cmOptions: fm.filePreviewOptions}"></file-viewer>
+            </div>
+        </transition>
+    </div>
+    <file-manager-bottom v-bind:instance-id="instanceId" v-bind:methods="fmBottomMethods"></file-manager-bottom>
+    <file-manager-buttons v-bind:instance-id="instanceId" v-bind:methods="fmButtonsMethods"></file-manager-buttons>
+</div>

@@ -10,36 +10,12 @@ exports.config = {
             }
         ],
         fileManager: {
-            thumbnailView: false,
-            currentThumbnailSize: 2.5,
-            showHiddenFiles: false,
-            scrollTree: true,
-
-            minThumbnailSize: 1,
-            maxThumbnailSize: 10,
-            thumbnailSizeStep: 0.1,
-            operationDelay: 20,
-            stepDelay: 5,
-            uploadDelay: 300,
-            scrollTreeDuration: 600,
-            listTimeoutDuration: 100,
-            treeTimeoutDuration: 150,
-            searchTimeoutDuration: 200,
-        }
-    },
-    configData: {
-        ignoreUserConfig: [
-            'appConfig.fileManager.operationDelay',
-            'appConfig.fileManager.stepDelay',
-            'appConfig.fileManager.uploadDelay',
-            'appConfig.fileManager.maxThumbnailSize',
-            'appConfig.fileManager.minThumbnailSize',
-            'appConfig.fileManager.thumbnailSizeStep',
-            'appConfig.fileManager.scrollTreeDuration',
-            'appConfig.fileManager.listTimeoutDuration',
-            'appConfig.fileManager.treeTimeoutDuration',
-            'appConfig.fileManager.searchTimeoutDuration',
-        ]
+            config: {
+                thumbnailView: false,
+                currentThumbnailSize: 2.5,
+                showHiddenFiles: false,
+            },
+        },
     },
     debug: {
         forceDebug: {

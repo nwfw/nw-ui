@@ -1,0 +1,18 @@
+<span class="file-manager-form-control-wrapper">
+    <div ref="input" class="file-manager-form-control-input">
+        <span class="file-manager-form-control-input-sections" v-dragula="value.items" drake="items">
+            <span class="file-manager-form-control-input-section can-drop" v-for="item in value.items" v-bind:key="item.path">
+                <span class="file-manager-form-control-input-section-name" :title="item.path">
+                    <span :class="['file-manager-form-control-input-section-name-icon fa', {'fa-file': item.type == 'file', 'fa-folder': item.type == 'dir'}]"></span>
+                    <span class="file-manager-form-control-input-section-name-text" v-html="item.name"></span>
+                </span>
+                <span class="file-manager-form-control-input-section-actions">
+                    <a href="#" :class="['file-manager-form-control-input-section-drag drag-handle fa fa-arrows', {'file-manager-form-control-input-section-drag-hidden': value.items.length == 1}]"></a>
+                    <a href="#" @click.prevent="removeItem(item)" class="file-manager-form-control-input-section-remove fa fa-times"></a>
+                </span>
+            </span>
+            <span class="file-manager-control-input-section file-manager-control-input-section-placeholder" v-if="!value.items.length" v-html="translate('Click to open file manager')" @click.prevent="handleControlClick"></span>
+        </span>
+        <a href="#" class="file-manager-form-control-icon fa fa-folder" @click.prevent="handleControlClick"></a>
+    </div>
+</span>

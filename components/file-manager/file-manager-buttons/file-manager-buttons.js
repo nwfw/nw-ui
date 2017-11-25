@@ -1,15 +1,18 @@
 /**
- * @fileOverview file-manager-thumb-item component file
+ * @fileOverview file-manager-buttons component file
  * @author Dino Ivankov <dinoivankov@gmail.com>
  * @version 1.3.1
  */
 
+const _ = require('lodash');
+
 var _appWrapper = window.getAppWrapper();
 var appState = _appWrapper.getAppState();
+
 /**
  * App debug component
  *
- * @name file-manager-thumb-item
+ * @name file-manager-buttons
  * @memberOf components
  * @property {string}   name        Name of the component
  * @property {string}   template    Component template contents
@@ -21,37 +24,24 @@ var appState = _appWrapper.getAppState();
  * @property {Object}   components  Child components
  */
 exports.component = {
-    name: 'file-manager-thumb-item',
+    name: 'file-manager-buttons',
     template: '',
     props: [
         'instanceId',
-        'item',
-        'openFile',
-        'downloadFile',
-        'listItemReset',
-        'itemClick',
-        'itemOperation',
-        'itemConfirm',
-        'itemCancel',
-        'isSelectedItem',
-        'isCopiedItem',
-        'isCutItem',
-        'isOnClipboardItem',
-        'getItemIconClass',
-        'zoomImage',
-        'getThumbWidth',
+        'methods'
     ],
     data: function () {
         return appState.fileManagerInstances[this.instanceId];
     },
     methods: {
-        toggleInfo: function(){
-            this.item.showInfo = !this.item.showInfo;
+        canConfirm: function(){
+            return (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback));
+        },
+        getSelectedFilePaths: function(){
+            return _.map(this.fm.selectedFiles, (item) => {
+                return item.path;
+            }).join('<br />');
         }
     },
-    computed: {
-        fileIconClass: function(){
-            return this.getItemIconClass(this.item);
-        }
-    }
+    computed: {}
 };

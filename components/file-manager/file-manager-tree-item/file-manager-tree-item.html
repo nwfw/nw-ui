@@ -4,6 +4,6 @@
         <span class="item-name" v-html="item.name"></span>
     </div>
     <ul class="tree-item-children" v-if="item.children && item.children.length">
-        <file-manager-tree-item v-bind:instance-id="instanceId" v-bind:item-click="itemClick" v-bind:key="child.path" v-for="child in item.children" v-bind:item="child" />
+        <file-manager-tree-item v-bind:instance-id="instanceId" v-bind:methods="methods" v-bind:key="child.path" v-for="child in item.children" v-bind:item="child" />
     </ul>
 </li>
