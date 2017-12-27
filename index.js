@@ -1,7 +1,13 @@
 const path = require('path');
-exports.globalComponentDir = path.resolve(path.join(__dirname, './components/file-manager'));
+exports.globalComponentDir = [
+    path.resolve(path.join(__dirname, './components/file-manager')),
+    path.resolve(path.join(__dirname, './components/control')),
+];
 exports.globalComponentMapping = [
     {
+        'icon-link-confirm': {
+            name: 'icon-link-confirm'
+        },
         'file-manager': {
             name: 'file-manager',
             components: {

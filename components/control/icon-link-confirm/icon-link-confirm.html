@@ -1,0 +1,11 @@
+<span class="icon-link-confirm-wrapper">
+    <a v-if="!confirmed" href="#" :title="title" :class="getIconClasses()" @click.prevent="confirm" v-html="text"></a>
+    <span :class="getCheckboxWrapperClasses()" v-else>
+        <span :class="getCountdownClasses()" v-html="confirmTimeoutRemaining"></span>
+        <a href="#" :title="getConfirmTitle()" :class="getConfirmClasses()" @click.prevent="confirm" @mouseover.capture="checkboxHover" @mouseout.capture="checkboxBlur">
+            <span :class="getIconConfirmClasses()"></span>
+            <span v-if="confirmText" v-html="confirmText"></span>
+            <span v-else-if="text" v-html="text"></span>
+        </a>
+    </span>
+</span>

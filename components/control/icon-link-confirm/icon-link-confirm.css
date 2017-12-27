@@ -1,0 +1,34 @@
+.icon-link-confirm-wrapper {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    align-items: center;
+
+    & .icon-link-confirm-checkbox-wrapper {
+        position: relative;
+
+        & .icon-link-confirm-checkbox {
+            opacity: 0;
+        }
+
+        & .icon-link-confirm-checkbox-countdown {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(-50%);
+            text-align: center;
+            font-weight: var(--font-weight-light);
+            pointer-events: none;
+        }
+
+        &:hover {
+            & .icon-link-confirm-checkbox {
+                opacity: 1;
+            }
+
+            & .icon-link-confirm-checkbox-countdown {
+                visibility: hidden;
+            }
+        }
+    }
+}

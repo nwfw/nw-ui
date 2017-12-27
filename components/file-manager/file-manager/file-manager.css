@@ -1252,3 +1252,9 @@
         }
     }
 }
+
+.file-manager-form-control-path-wrapper {
+    & .file-manager-form-control-input-section {
+        flex: 0 1 auto;
+    }
+}

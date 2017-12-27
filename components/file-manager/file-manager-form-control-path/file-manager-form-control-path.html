@@ -1,0 +1,17 @@
+<span class="file-manager-form-control-wrapper file-manager-form-control-path-wrapper">
+    <div ref="input" class="file-manager-form-control-input">
+        <span class="file-manager-form-control-input-sections">
+            <span v-if="value" class="file-manager-form-control-input-section can-drop" v-bind:key="value">
+                <span class="file-manager-form-control-input-section-name" :title="value">
+                    <span class="file-manager-form-control-input-section-name-text" v-html="value"></span>
+                </span>
+                <span class="file-manager-form-control-input-section-actions">
+                    <a href="#" :class="['file-manager-form-control-input-section-drag drag-handle fa fa-arrows', {'file-manager-form-control-input-section-drag-hidden': value}]"></a>
+                    <a href="#" @click.prevent="clearValue" class="file-manager-form-control-input-section-remove fa fa-times"></a>
+                </span>
+            </span>
+            <span class="file-manager-control-input-section file-manager-control-input-section-placeholder" v-if="!value" v-html="translate('Click to open file manager')" @click.prevent="handleControlClick"></span>
+        </span>
+        <a href="#" class="file-manager-form-control-icon fa fa-folder" @click.prevent="handleControlClick"></a>
+    </div>
+</span>
