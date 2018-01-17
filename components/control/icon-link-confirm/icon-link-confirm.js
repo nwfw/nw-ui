@@ -39,7 +39,10 @@ exports.component = {
         'text',
         'confirmText',
         'title',
-        'confirmTitle'
+        'confirmTitle',
+        'onClick',
+        'onConfirm',
+        'onConfirmTimeout',
     ],
     data: function () {
         return {
@@ -59,7 +62,7 @@ exports.component = {
     },
     beforeDestroy: function(){
         this.noNotification = true;
-        this.resetConfirm();
+        this.resetConfirm(true);
     },
     methods: {
         getConfirmTitle: function(){
@@ -127,6 +130,9 @@ exports.component = {
         },
         confirm: function(e) {
             if (!this.confirmed) {
+                if (this.onClick && _.isFunction(this.onClick)){
+                    this.onClick(e);
+                }
                 this.confirmed = true;
                 this.startConfirmCountdown();
                 this.$nextTick( () => {
@@ -138,6 +144,9 @@ exports.component = {
                 this.confirmNotification();
             } else {
                 if (this.action && _.isFunction(this.action)){
+                    if (this.onConfirm && _.isFunction(this.onConfirm)){
+                        this.onConfirm(e);
+                    }
                     this.stopConfirmCountdown();
                     this.confirmed = false;
                     this.action(e);
@@ -153,9 +162,12 @@ exports.component = {
             }
 
         },
-        stopConfirmCountdown: function(){
+        stopConfirmCountdown: function(noHandler = true){
             clearTimeout(this.confirmTimeout);
             clearInterval(this.confirmInterval);
+            if (!noHandler && this.onConfirmTimeout && _.isFunction(this.onConfirmTimeout)){
+                this.onConfirmTimeout();
+            }
         },
         updateConfirmCountdown: function(){
             if (this.confirmTimeoutRemaining > 0){
@@ -184,8 +196,8 @@ exports.component = {
                 _appWrapper.addNotification(notificationText, 'warning', [], true, {immediate: true, duration: 1000});
             }
         },
-        resetConfirm: function(){
-            this.stopConfirmCountdown();
+        resetConfirm: function(noHandler = false){
+            this.stopConfirmCountdown(noHandler);
             if (!window.noconfirm){
                 this.confirmed = false;
             }
