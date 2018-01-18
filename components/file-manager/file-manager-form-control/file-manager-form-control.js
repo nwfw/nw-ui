@@ -37,7 +37,7 @@ exports.component = {
             type: Object,
             required: true,
             validator: function (value) {
-                console.log(value);
+                // console.log(value);
                 let valid = value && !_.isUndefined(value.paths) && value.items && _.isArray(value.items);
                 if (!valid){
                     console.error('File manager form control model must contain array "items" and string "paths"');

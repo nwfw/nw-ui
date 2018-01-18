@@ -58,7 +58,8 @@ exports.component = {
                 options = {};
             }
             options = _.defaultsDeep({
-                initialSelectedItems: this.value,
+                // initialSelectedItems: this.value,
+                initialSelectedPaths: this.value,
                 confirmCallback: this.confirmCallback
             }, options);
             _appWrapper.app.fileManagerHelper.openFileManagerModal(options);
