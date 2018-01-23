@@ -49,7 +49,7 @@ exports.component = {
         return {};
     },
     mounted: function(){
-        console.log(this.options);
+        // console.log(this.options);
     },
     methods: {
         handleControlClick: function() {

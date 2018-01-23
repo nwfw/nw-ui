@@ -153,6 +153,7 @@ exports.appState = {
             list: null,
             search: null,
             itemClick: null,
+            checkNewNameErrors: null,
         },
 
         defaultItem: {

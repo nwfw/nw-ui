@@ -31,7 +31,6 @@ exports.component = {
     helper: null,
     data: function () {
         let data = {};
-
         if (appState.modalData.currentModal && appState.modalData.currentModal.treeData){
             data.fm = appState.modalData.currentModal;
         } else if (this.options && _.isObject(this.options)){
@@ -65,6 +64,7 @@ exports.component = {
         this.fm.fmBusy = true;
         this.fm.timeouts.tree = null;
         this.fm.timeouts.list = null;
+        this.fm.timeouts.checkNewNameErrors = null;
         this.fm.timeouts.itemClick = null;
         if (!this.fm.rootDir){
             this.fm.rootDir = path.resolve('/');
@@ -210,6 +210,10 @@ exports.component = {
                             if (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback)){
                                 this.fm.confirmCallback([item]);
                             }
+                        }
+                    } else {
+                        if (this.fm.savingFile && item.type == 'file' && item.name){
+                            this.fm.newFileName = item.name;
                         }
                     }
                 }
@@ -691,16 +695,28 @@ exports.component = {
             this.fm.viewClipboardItems = false;
             this.fm.massOperationsVisible = false;
         },
-        fileManagerConfirm: function() {
+        callConfirmCallback: function(values) {
             let result;
-            let values = [];
-            if (this.fm.selectedFiles.length){
-                values = this.fm.selectedFiles;
-            }
             if (this.fm.confirmCallback && _.isFunction(this.fm.confirmCallback)){
                 result = this.fm.confirmCallback(values);
             } else {
                 _appWrapper.getHelper('fileManager').log('No confirm callback for file manager "{1}"!', 'warning', [this.instanceId]);
+            }
+            return result;
+        },
+        fileManagerConfirm: async function() {
+            let result;
+            let values = [];
+            if (this.fm.savingFile && this.fm.newFileName && !this.hasNewNameErrors()) {
+                let filePath = path.join(this.fm.currentDir, this.fm.newFileName);
+                let item = await this.helper.getListItem(filePath);
+                values.push(item);
+                result = this.callConfirmCallback(values);
+            } else if (this.fm.selectedFiles.length){
+                values = this.fm.selectedFiles;
+                result = this.callConfirmCallback(values);
+            } else {
+                result = this.callConfirmCallback(values);
             }
             return result;
         },
@@ -716,6 +732,27 @@ exports.component = {
                 _appWrapper.getHelper('fileManager').log('No item confirm callback for file manager "{1}"!', 'warning', [this.instanceId]);
             }
             return result;
+        },
+        checkNewNameErrors: function(){
+            clearTimeout(this.fm.timeouts.checkNewNameErrors);
+            this.fm.timeouts.checkNewNameErrors = setTimeout(this.hasNewNameErrors, 50);
+        },
+        hasNewNameErrors: function(){
+            let errors = false;
+            if (!this.fm.newFileName){
+                errors = true;
+            } else if (this.fm.newFileNameMatch && !this.fm.newFileName.match(this.fm.newFileNameMatch)){
+                errors = true;
+            }
+            if (errors){
+                this.$nextTick(() => {
+                    let input = this.$el.querySelector('.file-manager-new-file-name');
+                    if (input && input.focus && _.isFunction(input.focus)){
+                        input.focus();
+                    }
+                });
+            }
+            return errors;
         }
     },
     computed: {
@@ -759,7 +796,10 @@ exports.component = {
             };
         },
         fmNewMethods: function(){
-            return {};
+            return {
+                checkNewNameErrors: this.checkNewNameErrors,
+                hasNewNameErrors: this.hasNewNameErrors,
+            };
         },
         fmButtonsMethods: function() {
             return {
