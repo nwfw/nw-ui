@@ -27,21 +27,41 @@ exports.component = {
     name: 'icon-link-confirm',
     template: '',
     props: [
+        // method called on confirm
         'action',
+        // classes added to icon link
         'iconClasses',
+        // classes added to confirm wrapper
         'confirmClasses',
+        // classes added to confirm checkbox icon
         'iconConfirmClasses',
+        // Notification text when first click occurs
         'confirmNotificationText',
+        // Notification type when first click occurs
+        'confirmNotificationType',
+        // Notification text when counter times out
         'resetConfirmNotificationText',
+        // Notification type when counter times out
+        'resetConfirmNotificationType',
+        // Flag to skip notifications entirely
         'skipNotification',
+        // Flag to prevent auto cancel timeout
         'noAutoCancel',
+        // Duration in ms for auto cancel countdown (min 1000)
         'autoCancelDuration',
+        // Text to display in the link
         'text',
+        // Text to display for confirm link/icon
         'confirmText',
+        // Title html attribute for link
         'title',
+        // Title html attribute for confirm checkbox
         'confirmTitle',
+        // Function triggered when link is clicked (before confirming)
         'onClick',
+        // Function triggered when confirm checkbox is clicked (after confirming)
         'onConfirm',
+        // Function triggered when auto cancel timeout expires
         'onConfirmTimeout',
     ],
     data: function () {
@@ -122,10 +142,9 @@ exports.component = {
             }
             if (iconConfirmClasses.length){
                 classes = _.concat(classes, iconConfirmClasses);
-            } else {
-                classes.push('fa');
-                classes.push('fa-square-o');
             }
+            classes.push('fa');
+            classes.push('fa-square-o');
             return classes;
         },
         confirm: function(e) {
@@ -182,18 +201,30 @@ exports.component = {
                 } else {
                     notificationText = _appWrapper.translate('Click again to confirm');
                 }
-                _appWrapper.addNotification(notificationText, 'info', [], true, {immediate: true, duration: 1000});
+                let notificationType;
+                if (this.confirmNotificationType){
+                    notificationType = this.confirmNotificationType;
+                } else {
+                    notificationType = 'info';
+                }
+                _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
             }
         },
         resetConfirmNotification: function() {
             if (!this.noNotification){
                 let notificationText;
-                if (this.confirmNotificationText){
+                if (this.resetConfirmNotificationText){
                     notificationText = this.resetConfirmNotificationText;
                 } else {
                     notificationText = _appWrapper.translate('Confirmation cancelled');
                 }
-                _appWrapper.addNotification(notificationText, 'warning', [], true, {immediate: true, duration: 1000});
+                let notificationType;
+                if (this.resetConfirmNotificationType){
+                    notificationType = this.resetConfirmNotificationType;
+                } else {
+                    notificationType = 'info';
+                }
+                _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
             }
         },
         resetConfirm: function(noHandler = false){

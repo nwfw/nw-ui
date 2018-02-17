@@ -25,6 +25,7 @@ var appState = _appWrapper.getAppState();
 exports.component = {
     name: 'file-manager-form-control',
     template: '',
+    drakeId: null,
     props: {
         options: {
             type: Object,
@@ -50,14 +51,22 @@ exports.component = {
         return {};
     },
     created: function(){
+        this.drakeId = null;
         this.initializeDragula();
     },
     beforeDestroy: function(){
         this.destroyDragula();
     },
     methods: {
+        getDrakeId: function(){
+            if (!this.drakeId) {
+                this.drakeId = _.uniqueId('items_');
+            }
+            return this.drakeId;
+        },
         initializeDragula: function() {
-            this.$dragula.$service.options('items', {
+            let drakeId = this.getDrakeId();
+            this.$dragula.$service.options(drakeId, {
                 direction: 'horizontal',
                 revertOnSpill: true,
                 moves: function (el, source, handle) {
@@ -81,7 +90,8 @@ exports.component = {
             });
         },
         destroyDragula: function(){
-            let instance = this.$dragula.$service.find('items');
+            let drakeId = this.getDrakeId();
+            let instance = this.$dragula.$service.find(drakeId);
             if (instance && instance.destroy){
                 instance.destroy();
             }

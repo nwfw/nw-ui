@@ -1,6 +1,6 @@
 <span class="file-manager-form-control-wrapper">
     <div ref="input" class="file-manager-form-control-input">
-        <span class="file-manager-form-control-input-sections" v-dragula="value.items" drake="items">
+        <span class="file-manager-form-control-input-sections" v-dragula="value.items" :drake="getDrakeId()">
             <span class="file-manager-form-control-input-section can-drop" v-for="item in value.items" v-bind:key="item.path">
                 <span class="file-manager-form-control-input-section-name" :title="item.path">
                     <span :class="['file-manager-form-control-input-section-name-icon fa', {'fa-file': item.type == 'file', 'fa-folder': item.type == 'dir'}]"></span>
