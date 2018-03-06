@@ -8,6 +8,9 @@ exports.globalComponentMapping = [
         'icon-link-confirm': {
             name: 'icon-link-confirm'
         },
+        'autocomplete-text': {
+            name: 'autocomplete-text'
+        },
         'file-manager': {
             name: 'file-manager',
             components: {

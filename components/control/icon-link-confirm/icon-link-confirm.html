@@ -1,4 +1,4 @@
-<span class="icon-link-confirm-wrapper">
+<span class="nwui-control-wrapper icon-link-confirm-wrapper">
     <a v-if="!confirmed" href="#" :title="title" :class="getIconClasses()" @click.prevent="confirm" v-html="text"></a>
     <span :class="getCheckboxWrapperClasses()" v-else>
         <span :class="getCountdownClasses()" v-html="confirmTimeoutRemaining"></span>

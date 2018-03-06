@@ -1,0 +1,13 @@
+<span class="nwui-control-wrapper autocomplete-text-wrapper">
+    <input class="autocomplete-text-input" type="text" :tabindex="tabindex" autocomplete="off" @keyup.esc.capture="handleEscKey" @keyup="handleKeyUp" @blur="handleBlur" :value="value" />
+    <span class="autocomplete-text-input-placeholder" v-html="currentValue" v-if="currentValue"></span>
+    <div class="autocomplete-text-list-wrapper" v-show="showList && autocompleteList && autocompleteList.length">
+        <div class="autocomplete-text-tools">
+            <a href="#" @click.prevent="resetData" :title="translate('Close')" class="autocomplete-text-close-link fa fa-times destructive-action"></a>
+            <icon-link-confirm v-bind:title="translate('Clear data')" v-if="clearDataMethod" v-bind:icon-classes="['autocomplete-text-clear-link', 'fa', 'fa-trash']" v-bind:action="clearAutocompleteData" v-bind:on-click="clearConfirmClick" v-bind:on-confirm-timeout="clearConfirmTimeout" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+        </div>
+        <div class="autocomplete-text-list">
+            <div :class="['autocomplete-text-list-item', {'autocomplete-text-list-item-active': activeIndex == index}]" v-for="(item, index) in autocompleteList" v-html="item" @click.prevent="clickItem(index)" @mouseover="hoverItem(index)"></div>
+        </div>
+    </div>
+</span>
