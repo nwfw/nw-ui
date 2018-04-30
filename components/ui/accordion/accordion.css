@@ -1,0 +1,34 @@
+.nw-ui-accordion {
+    & .nw-ui-accordion-item {
+        margin: 3px 0;
+        border-bottom: 1px solid;
+
+        & .nw-ui-accordion-item-title-wrapper {
+            padding: 3px 0;
+            margin-bottom: 3px;
+
+            & .nw-ui-accordion-toggle-link {
+                display: flex;
+                flex-flow: row;
+                justify-content: space-between;
+                outline: none;
+            }
+        }
+
+        & .nw-ui-accordion-item-text-wrapper {
+            min-height: 0;
+            max-height: calc(100% + 0px);
+            padding-bottom: 3px;
+            margin-bottom: 3px;
+            cursor: pointer;
+        }
+
+        &.nw-ui-accordion-item-active {
+
+            & .nw-ui-accordion-item-title-wrapper {
+                border-bottom: 1px dotted;
+                font-weight: bold;
+            }
+        }
+    }
+}

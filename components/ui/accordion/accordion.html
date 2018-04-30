@@ -1,0 +1,18 @@
+<div class="nw-ui-accordion">
+    <div :class="['nw-ui-accordion-item', {'nw-ui-accordion-item-active': !item.collapsed}, itemClasses]" v-for="(item, index) in items" :key="'accordion_item_' + index">
+        <div :class="['nw-ui-accordion-item-title-wrapper', titleClasses]">
+            <a href="#" :class="['nw-ui-accordion-toggle-link']" @click.prevent="toggleItem(index)">
+                <span class="nw-ui-accordion-item-title" v-html="item.title"></span>
+                <span :class="['fa', {'fa-caret-down': item.collapsed, 'fa-caret-up': !item.collapsed}]"></span>
+            </a>
+        </div>
+        <template v-if="!transition">
+            <div :class="['nw-ui-accordion-item-text-wrapper', textClasses]" v-show="!item.collapsed" v-html="item.text" @click.prevent="toggleItem(index)"></div>
+        </template>
+        <template v-else>
+            <transition :name="transition">
+                <div :class="['nw-ui-accordion-item-text-wrapper', textClasses]" v-show="!item.collapsed" v-html="item.text" @click.prevent="toggleItem(index)"></div>
+            </transition>
+        </template>
+    </div>
+</div>

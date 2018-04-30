@@ -2,6 +2,7 @@ const path = require('path');
 exports.globalComponentDir = [
     path.resolve(path.join(__dirname, './components/file-manager')),
     path.resolve(path.join(__dirname, './components/control')),
+    path.resolve(path.join(__dirname, './components/ui')),
 ];
 exports.globalComponentMapping = [
     {
@@ -10,6 +11,9 @@ exports.globalComponentMapping = [
         },
         'autocomplete-text': {
             name: 'autocomplete-text'
+        },
+        'accordion': {
+            name: 'accordion'
         },
         'file-manager': {
             name: 'file-manager',
