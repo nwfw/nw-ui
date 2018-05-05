@@ -12,6 +12,9 @@ exports.globalComponentMapping = [
         'autocomplete-text': {
             name: 'autocomplete-text'
         },
+        'nw-tabs': {
+            name: 'nw-tabs'
+        },
         'accordion': {
             name: 'accordion'
         },
