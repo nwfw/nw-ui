@@ -439,7 +439,11 @@ exports.component = {
                         }
                         if (doSelect){
                             if (!_.find(this.fm.selectedFiles, {path: itemPath})){
-                                this.fm.selectedFiles.push(item);
+                                if (this.fm.settings.maxSelectedItems == 1) {
+                                    this.fm.selectedFiles = [item];
+                                } else {
+                                    this.fm.selectedFiles.push(item);
+                                }
                             } else {
                                 this.fm.selectedFiles = _.filter(this.fm.selectedFiles, (item) => {
                                     return item.path != itemPath;

@@ -1,0 +1,14 @@
+<div :class="getFieldClasses()">
+    <fieldset class="ui-form-fieldset ui-form-subcontrols-fieldset" v-if="dragulaInitialized">
+        <legend class="ui-form-subcontrols-legend">
+            <slot name="ui-form-row-tools-left"></slot>
+            <span class="ui-form-subcontrols-legend-text" v-html="control.name"></span>
+            <slot name="ui-form-row-tools-right"></slot>
+        </legend>
+        <slot name="ui-form-row-edit-control"></slot>
+        <div class="ui-form-subcontrols-wrapper" v-if="!minimized" v-dragula="parentValue" :drake="getDrakeId()" :service="getServiceName()" >
+            <ui-form-control v-for="subControl in control.subControls" :key="subControl.path" v-bind:control="subControl" v-bind:form-data="formData" v-bind:methods="methods" v-bind:form-options="formData.formOptions" :change="innerValueChange(subControl)" v-bind:add-handler="methods.addRow" v-bind:remove-handler="methods.removeRow" v-bind:item="formData.item" v-bind:show-field-type-icons="showFieldTypeIcons" v-bind:allow-property-add="allowPropertyAdd" v-bind:allow-property-edit="allowPropertyEdit" v-bind:allow-property-remove="allowPropertyRemove"></ui-form-control>
+        </div>
+        <ui-form-add-row v-if="addRowActive" ref="addRow" v-bind:control="control" v-bind:item="formData.item" v-bind:add-handler="methods.addRow" v-bind:close-handler="toggleNewRow"></ui-form-add-row>
+    </fieldset>
+</div>

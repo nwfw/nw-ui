@@ -83,7 +83,8 @@ exports.component = {
                     return result;
                 }
             });
-            this.$dragula.$service.eventBus.$on('drop', () => {
+            let instance = this.$dragula.$service.find(drakeId);
+            instance.on('drop', () => {
                 this.$nextTick(() => {
                     this.setPaths();
                 });

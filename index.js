@@ -3,6 +3,7 @@ exports.globalComponentDir = [
     path.resolve(path.join(__dirname, './components/file-manager')),
     path.resolve(path.join(__dirname, './components/control')),
     path.resolve(path.join(__dirname, './components/ui')),
+    path.resolve(path.join(__dirname, './components/form')),
 ];
 exports.globalComponentMapping = [
     {
@@ -66,6 +67,15 @@ exports.globalComponentMapping = [
                     name: 'file-manager-bottom',
                     components: {}
                 },
+            }
+        },
+        'tree': {
+            name: 'tree',
+            components: {
+                'tree-item': {
+                    name: 'tree-item',
+                    components: {}
+                }
             }
         }
     }

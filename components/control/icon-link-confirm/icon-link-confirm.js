@@ -45,6 +45,8 @@ exports.component = {
         'resetConfirmNotificationType',
         // Flag to skip notifications entirely
         'skipNotification',
+        // Flag to prevent auto cancel countdown
+        'noCancelCountdown',
         // Flag to prevent auto cancel timeout
         'noAutoCancel',
         // Duration in ms for auto cancel countdown (min 1000)
@@ -70,6 +72,7 @@ exports.component = {
             noNotification: false,
             confirmTimeout: null,
             confirmInterval: null,
+            doCancelCountdown: true,
             confirmTimeoutDuration: 6000,
             confirmTimeoutRemaining: 6
         };
@@ -79,6 +82,9 @@ exports.component = {
             this.confirmTimeoutDuration = this.autoCancelDuration;
         }
         this.noNotification = this.skipNotification;
+        if (this.noCancelCountdown) {
+            this.doCancelCountdown = false;
+        }
     },
     beforeDestroy: function(){
         this.noNotification = true;
@@ -196,7 +202,7 @@ exports.component = {
         confirmNotification: function() {
             if (!this.noNotification){
                 let notificationText;
-                if (this.confirmNotificationText){
+                if (!_.isUndefined(this.confirmNotificationText)){
                     notificationText = this.confirmNotificationText;
                 } else {
                     notificationText = _appWrapper.translate('Click again to confirm');
@@ -207,13 +213,15 @@ exports.component = {
                 } else {
                     notificationType = 'info';
                 }
-                _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
+                if (notificationText) {
+                    _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
+                }
             }
         },
         resetConfirmNotification: function() {
             if (!this.noNotification){
                 let notificationText;
-                if (this.resetConfirmNotificationText){
+                if (!_.isUndefined(this.resetConfirmNotificationText)){
                     notificationText = this.resetConfirmNotificationText;
                 } else {
                     notificationText = _appWrapper.translate('Confirmation cancelled');
@@ -224,7 +232,9 @@ exports.component = {
                 } else {
                     notificationType = 'info';
                 }
-                _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
+                if (notificationText) {
+                    _appWrapper.addNotification(notificationText, notificationType, [], true, {immediate: true, duration: 1000});
+                }
             }
         },
         resetConfirm: function(noHandler = false){
@@ -253,19 +263,23 @@ exports.component = {
             }
         },
         checkboxBlur: function(e) {
-            this.startConfirmCountdown();
-            if (e.target && e.target.hasClass){
-                let el = e.target;
-                if (!el.hasClass('icon-link-confirm-checkbox')){
-                    while (!el.hasClass('icon-link-confirm-checkbox') && el.parentNode) {
-                        el = el.parentNode;
+            if (!this.doCancelCountdown) {
+                this.resetConfirm();
+            } else {
+                this.startConfirmCountdown();
+                if (e.target && e.target.hasClass){
+                    let el = e.target;
+                    if (!el.hasClass('icon-link-confirm-checkbox')){
+                        while (!el.hasClass('icon-link-confirm-checkbox') && el.parentNode) {
+                            el = el.parentNode;
+                        }
                     }
-                }
-                if (el.hasClass('icon-link-confirm-checkbox')){
-                    let iconEl = el.querySelector('.icon-confirm-checkbox');
-                    if (iconEl && iconEl.hasClass && iconEl.hasClass('fa-check-square-o')){
-                        iconEl.removeClass('fa-check-square-o');
-                        iconEl.addClass('fa-square-o');
+                    if (el.hasClass('icon-link-confirm-checkbox')){
+                        let iconEl = el.querySelector('.icon-confirm-checkbox');
+                        if (iconEl && iconEl.hasClass && iconEl.hasClass('fa-check-square-o')){
+                            iconEl.removeClass('fa-check-square-o');
+                            iconEl.addClass('fa-square-o');
+                        }
                     }
                 }
             }

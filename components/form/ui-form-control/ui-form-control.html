@@ -1,0 +1,19 @@
+<div v-bind:class="getFormControlClasses()" :data-path="control.path">
+	<component v-if="controlFieldActive" ref="innerControl" v-bind:is="control.formControl" v-bind:control="control" v-bind:form-data="formData" v-bind:methods="controlMethods" v-bind:minimized="minimized" v-bind:add-row-active="addRowActive" v-bind:show-field-type-icons="showFieldTypeIcons" v-bind:allow-property-add="allowPropertyAdd" v-bind:allow-property-edit="allowPropertyEdit" v-bind:allow-property-remove="allowPropertyRemove">
+        <template slot="ui-form-row-tools-left">
+            <span class="ui-form-row-tools-wrapper ui-form-row-tools-left-wrapper">
+                <span v-if="showFieldTypeIcons" :title="getFormControlIconTitle()" :class="getFormControlIconClasses()"></span>
+                <a v-if="showDragButton()" :class="['drag-row-link drag-handle fa fa-arrows']"></a>
+                <a v-if="showRemoveButton()" @click.stop.capture.prevent="removeRow(control.path)" @mouseover="removeHover" @mouseout="removeOut" :title="translate('Remove')" :data-tooltip-data="toJson({immediate: true})" v-nwtooltip="1" :class="['ui-row-tools-link remove-row', {'remove-object': control.type == 'object', 'remove-row-object': control.type != 'object'}, 'fa fa-minus']"></a>
+            </span>
+        </template>
+        <template slot="ui-form-row-tools-right">
+            <span class="ui-form-row-tools-wrapper ui-form-row-tools-right-wrapper">
+                <a v-if="showAddButton()" @click="toggleNewRow" :title="getAddButtonTitle()" v-nwtooltip="1" :data-tooltip-data="toJson({immediate: true})" :class="['add-new-row-link add-new-row-object-link fa fa-plus', {'add-new-row-link-inactive': addRowActive, 'ui-form-invisible-element': minimized}]"></a>
+                <a v-if="control.subControls && control.subControls.length" @click="toggleRow" :title="translate('Toggle')" v-nwtooltip="1" :data-tooltip-data="toJson({immediate: true})" :class="['toggle-row fa', {'fa-caret-down': !minimized, 'fa-caret-up': minimized}]"></a>
+                <a v-if="showPropertyEditButton()" @click.prevent="toggleEditControl" :title="translate('Control options')" :data-tooltip-data="toJson({immediate: true})" v-nwtooltip="1" :class="['ui-row-tools-link edit-control', 'fa', 'fa-cog', {'edit-control-active': editControlActive}]"></a>
+                <ui-form-edit-control v-if="editControlActive" ref="editControl" v-bind:control="control" v-bind:form-data="formData" v-bind:close-handler="toggleEditControl" v-bind:methods="controlEditorMethods"></ui-form-edit-control>
+            </span>
+        </template>
+    </component>
+</div>

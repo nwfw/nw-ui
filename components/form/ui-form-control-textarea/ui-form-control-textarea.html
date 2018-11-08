@@ -1,0 +1,7 @@
+<div :class="getFieldClasses()">
+    <slot name="ui-form-row-tools-left"></slot>
+    <ui-form-control-label ref="controlLabel" v-bind:identifier="control.path" v-bind:control="control"></ui-form-control-label>
+    <textarea class="ui-form-control-input ui-form-control-textarea" v-bind:disabled="control.disabled" v-bind:readonly="control.readonly" :id="control.path" v-model="control.value" @focus="inputFocus" @change="onChange"></textarea>
+    <slot name="ui-form-row-tools-right"></slot>
+    <slot name="ui-form-row-edit-control"></slot>
+</div>

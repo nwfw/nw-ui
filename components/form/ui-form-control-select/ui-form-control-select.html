@@ -1,0 +1,8 @@
+<div :class="getFieldClasses()">
+    <slot name="ui-form-row-tools-left"></slot>
+    <ui-form-control-label ref="controlLabel" v-bind:identifier="control.path" v-bind:control="control"></ui-form-control-label>
+    <select class="ui-form-control-input ui-form-control-select" v-bind:disabled="control.disabled" v-bind:multiple="control.multiple" :id="control.path" v-bind:readonly="control.readonly" v-model="control.value" @focus="inputFocus" @change="onChange">
+        <option v-for="value in control.options" :key="value" v-html="value" :value="value" :selected="control.value == value"></option>
+    </select>
+    <slot name="ui-form-row-tools-right"></slot>
+</div>

@@ -4,9 +4,12 @@
     </div>
     <div class="nw-tab-wrappers">
         <div :class="['nw-tab', {'inactive-tab': !tab.active, 'active-tab': tab.active}]" v-for="(tab, index) in tabData.tabs" :key="'tab_' + index + '_contents'">
-            <div class="nw-tab-contents-wrapper" v-bind:style="getTabStyles()">
+            <div class="nw-tab-contents-wrapper" v-bind:style="tabStyles">
                 <template v-if="tab.bodyComponentName">
                     <component v-bind:is="tab.bodyComponentName" :ref="'tab_' + index + '_component'" v-bind:tab-data="tab"></component>
+                </template>
+                <template v-else-if="tab.slot">
+                    <slot :name="tab.slot"></slot>
                 </template>
                 <template v-else>
                     <span v-html="tab.body"></span>

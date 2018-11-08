@@ -1,0 +1,85 @@
+<div class="ui-form-edit-control">
+    <fieldset class="ui-form-fieldset ui-form-edit-control-fieldset">
+        <legend v-html="translate('Control options')"></legend>
+        <div class="ui-form-row ui-form-edit-control-row ui-form-edit-control-row-readonly">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Name')"></span>
+                </label>
+                <input class="ui-form-control-input ui-form-edit-control-input" type="text" :readonly="true" v-model="controlData.controlOptions.name" />
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row ui-form-edit-control-row-readonly">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Path')"></span>
+                </label>
+                <input class="ui-form-control-input ui-form-edit-control-input" type="text" :readonly="true" v-model="controlData.controlOptions.path" />
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Type')"></span>
+                </label>
+                <select class="ui-form-control-input ui-form-edit-control-input" v-model="controlData.controlOptions.type" @change="typeChanged">
+                    <option v-for="type in controlTypes" :value="type" v-html="type" :selected="type == controlData.controlOptions.type"></option>
+                </select>
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <ui-form-edit-control-type class="ui-form-field-wrapper ui-form-edit-control-field-wrapper" ref="editType" v-bind:control="control" v-bind:methods="typeEditorMethods" v-bind:property-type="controlData.controlOptions.type"></ui-form-edit-control-type>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-checkbox-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Required')"></span>
+                    <input class="ui-form-control-input ui-form-edit-control-input" type="checkbox" v-model="controlData.controlOptions.required" @change="controlChanged" />
+                </label>
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-checkbox-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Disabled')"></span>
+                    <input class="ui-form-control-input ui-form-edit-control-input" type="checkbox" v-model="controlData.controlOptions.disabled" @change="controlChanged" />
+                </label>
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-checkbox-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Read only')"></span>
+                    <input class="ui-form-control-input ui-form-edit-control-input" type="checkbox" v-model="controlData.controlOptions.readonly" @change="controlChanged" />
+                </label>
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Wrapper classes')"></span>
+                </label>
+                <input class="ui-form-control-input ui-form-edit-control-input" type="input" v-model="controlData.wrapperClasses" @change="controlChanged" />
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-checkbox-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Error')"></span>
+                    <input class="ui-form-control-input ui-form-edit-control-input" type="checkbox" v-model="controlData.controlOptions.error" @change="controlChanged" />
+                </label>
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row" v-if="controlData.controlOptions.error">
+            <div class="ui-form-field-wrapper ui-form-edit-control-field-wrapper">
+                <label class="ui-form-field-label ui-form-edit-control-label">
+                    <span class="ui-form-row-label-text" v-html="translate('Error text')"></span>
+                </label>
+                <input class="ui-form-control-input ui-form-edit-control-input" type="text" v-model="controlData.controlOptions.rowErrorText" @change="controlChanged" />
+            </div>
+        </div>
+        <div class="ui-form-row ui-form-edit-control-row ui-form-edit-control-buttons-row">
+            <input class="ui-form-edit-control-button ui-form-edit-control-button-cancel" type="button" :value="translate('Close')" @click.prevent="closeHandler" />
+        </div>
+    </fieldset>
+</div>

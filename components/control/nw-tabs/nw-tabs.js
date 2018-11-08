@@ -58,13 +58,14 @@ exports.component = {
     data: function () {
         return {
             tabHeight: 0,
+            tabStyles: {},
         };
     },
+    beforeMount: function(){
+        this.setTabStyles();
+    },
     mounted: function() {
-        // this.$nextTick(() => {
-            this.updateMaxHeight();
-        // });
-        window.tb = this;
+        this.updateMaxHeight();
     },
     methods: {
         updateMaxHeight: async function(){
@@ -90,18 +91,16 @@ exports.component = {
                 }
                 if (maxHeight && this.tabHeight != maxHeight) {
                     this.tabHeight = maxHeight;
-                    this.$nextTick(() => {
-                        this.$forceUpdate();
-                    });
+                    this.setTabStyles();
                 }
             }
         },
-        getTabStyles: function(){
+        setTabStyles: function() {
             let styles = {};
             if (this.tabHeight){
                 styles.height = this.tabHeight + 'px';
             }
-            return styles;
+            this.tabStyles = styles;
         },
         setTab: function(e) {
             let target = e.target;
@@ -112,7 +111,6 @@ exports.component = {
                 }
             }
             this.tabData.tabs[index].active = true;
-            // this.updateMaxHeight();
             if (this.tabChange && _.isFunction(this.tabChange)) {
                 this.tabChange(index);
             }

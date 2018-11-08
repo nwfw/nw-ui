@@ -46,12 +46,23 @@ exports.component = {
         },
     },
     data: function () {
-        return {};
+        return {
+            valuePlaceholder: ''
+        };
     },
-    mounted: function(){
-        // console.log(this.options);
+    beforeMount: function(){
+        this.valuePlaceholder = _.cloneDeep(this.value);
     },
     methods: {
+        getDisplayValue () {
+            let value = _.cloneDeep(this.value);
+            if (value.length >= 20 && value.match(/\//)) {
+                value = value.split('').reverse().join('');
+                value = _.truncate(value, {length: 20, omission: '', separator: '/'});
+                value = '[...]' + value.split('').reverse().join('');
+            }
+            return value;
+        },
         handleControlClick: function() {
             let options = _.cloneDeep(this.options);
             if (!options){
@@ -65,10 +76,10 @@ exports.component = {
             _appWrapper.app.fileManagerHelper.openFileManagerModal(options);
         },
         getValue: function(){
-            return this.value;
+            return this.valuePlaceholder;
         },
         setValue: function(value){
-            this.value = value;
+            this.valuePlaceholder = value;
             this.changed();
         },
         confirmCallback: function(items) {
@@ -84,7 +95,7 @@ exports.component = {
         changed: function() {
             this.$nextTick(() => {
                 if (this.onChange && _.isFunction(this.onChange)){
-                    return this.onChange(this.value);
+                    return this.onChange(this.valuePlaceholder);
                 }
             });
         },

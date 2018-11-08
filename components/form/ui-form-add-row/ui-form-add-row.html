@@ -1,0 +1,39 @@
+<div class="add-new-row-form">
+    <fieldset class="add-new-row-fieldset">
+        <legend v-html="translate('Add property')"></legend>
+        <div class="add-new-row-row" v-if="control.type == 'array'">
+            <label class="add-new-row-label" v-html="translate('Index')"></label>
+            <input class="add-new-row-input" type="text" v-model="propertyName" :readonly="true" @keyup.self.esc="closeHandler" @keyup.self.enter="addNewRow" />
+        </div>
+        <div class="add-new-row-row" v-else>
+            <label class="add-new-row-label" v-html="translate('Name')"></label>
+            <input class="add-new-row-input" type="text" v-model="propertyName" @keyup.self.esc="closeHandler" @keyup.self.enter="addNewRow" />
+        </div>
+        <div class="add-new-row-row">
+            <label class="add-new-row-label" v-html="translate('Type')"></label>
+            <select class="add-new-row-input" v-model="propertyType">
+                <option v-for="typeInfo in controlTypes" :value="typeInfo" v-html="typeInfo" :key="typeInfo" :selected="propertyType == typeInfo"></option>
+            </select>
+        </div>
+        <ui-form-edit-control-type class="add-new-row-row" ref="editType" v-bind:control="control" v-bind:methods="methods" v-bind:property-type="propertyType"></ui-form-edit-control-type>
+        <div class="add-new-row-row" v-if="propertyType == 'checkbox'">
+            <label class="add-new-row-label" v-html="translate('Value')"></label>
+            <input class="add-new-row-input" type="checkbox" v-model="propertyValue" />
+        </div>
+        <div class="add-new-row-row" v-else-if="propertyType == 'text'">
+            <label class="add-new-row-label" v-html="translate('Value')"></label>
+            <input class="add-new-row-input" type="text" v-model="propertyValue" @keyup.self.esc="closeHandler" @keyup.self.enter="addNewRow" />
+        </div>
+        <div class="add-new-row-row" v-else-if="propertyType == 'select'">
+            <label class="add-new-row-label" v-html="translate('Value')"></label>
+            <select class="add-new-row-input" v-model="propertyValue">
+                <option value="" v-html="translate('No value')" key="no-value" :selected="!propertyValue"></option>
+                <option v-for="option in propertyOptions" :value="option" v-html="option" :key="option" :selected="propertyValue == option"></option>
+            </select>
+        </div>
+        <div class="add-new-row-row add-new-row-buttons-row">
+            <input class="add-new-row-button add-new-row-button-cancel" type="button" :value="translate('Close')" @click.prevent="closeHandler" />
+            <input class="add-new-row-button" type="button" :value="translate('Add')" @click.prevent="addNewRow" :disabled="!canAddNewObjectRow()" />
+        </div>
+    </fieldset>
+</div>

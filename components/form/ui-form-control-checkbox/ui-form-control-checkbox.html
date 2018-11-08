@@ -1,0 +1,9 @@
+<div :class="getFieldClasses()">
+    <slot name="ui-form-row-tools-left"></slot>
+    <ui-form-control-label ref="controlLabel" v-bind:identifier="control.path" v-bind:control="control">
+        <template slot="ui-form-row-label-contents">
+            <input v-bind:disabled="control.disabled" v-bind:readonly="control.readonly" class="ui-form-control-input ui-form-control-checkbox" type="checkbox" :id="control.path" v-model="control.value" @change="onChange" />
+        </template>
+    </ui-form-control-label>
+    <slot name="ui-form-row-tools-right"></slot>
+</div>

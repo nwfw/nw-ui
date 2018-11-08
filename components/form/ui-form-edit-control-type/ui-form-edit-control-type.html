@@ -1,0 +1,12 @@
+<div class="ui-form-type-options-wrapper">
+    <template v-if="propertyType == 'select'">
+        <div class="ui-form-type-option-wrapper ui-form-select-options-editor">
+            <label class="ui-form-field-label" v-html="translate('Options')"></label>
+            <input class="ui-form-control-input" type="text" v-model="propertyOptions" @keyup="controlOptionsChange" />
+        </div>
+        <div class="ui-form-type-option-wrapper">
+            <label class="ui-form-field-label" v-html="translate('Multiple')"></label>
+            <input class="ui-form-control-input" type="checkbox" v-model="controlOptions.multiple" @change="controlChange" />
+        </div>
+    </template>
+</div>

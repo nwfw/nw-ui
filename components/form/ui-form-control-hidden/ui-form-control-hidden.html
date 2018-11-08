@@ -1,0 +1,5 @@
+<div :class="getFieldClasses()">
+    <slot name="ui-form-row-tools-left"></slot>
+    <input class="ui-form-control-input" v-bind:disabled="control.disabled" v-bind:readonly="control.readonly" :id="control.path" type="hidden" v-model="control.value" @focus="inputFocus" @change="onChange" />
+    <slot name="ui-form-row-tools-right"></slot>
+</div>

@@ -1,0 +1,15 @@
+<div class="ui-form">
+    <form v-if="!noFormTag">
+        <fieldset class="ui-form-fieldset ui-form-root-fieldset">
+            <legend>
+                <span class="ui-form-legend-text" v-html="label"></span>
+                <a v-if="allowPropertyAdd" @click="toggleNewRow" :title="translate('Add new property')" v-nwtooltip="1" :data-tooltip-data="toJson({immediate: true})" :class="['add-new-row-link fa fa-plus', {'add-new-row-link-inactive': addRowActive}]"></a>
+            </legend>
+            <ui-form-control v-for="control in controls" :key="control.path" v-bind:control="control" v-bind:methods="componentMethods" v-bind:form-data="formData" :change="boundMethods.dataValueChange" v-bind:remove-handler="boundMethods.removeRow" v-bind:add-handler="boundMethods.addRow" v-bind:show-field-type-icons="showFieldTypeIcons" v-bind:allow-property-add="allowPropertyAdd" v-bind:allow-property-edit="allowPropertyEdit" v-bind:allow-property-remove="allowPropertyRemove"></ui-form-control>
+            <transition name="transform-scale-height-from-top">
+                <ui-form-add-row v-if="addRowActive" ref="addRow" v-bind:control="false" v-bind:item="formData.item" v-bind:add-handler="boundMethods.addRow" v-bind:close-handler="toggleNewRow"></ui-form-add-row>
+            </transition>
+        </fieldset>
+    </form>
+    <ui-form-control v-else v-for="control in controls" :key="control.path" v-bind:control="control" v-bind:methods="componentMethods" v-bind:form-data="formData" :change="boundMethods.dataValueChange" v-bind:remove-handler="boundMethods.removeRow" v-bind:add-handler="boundMethods.addRow" v-bind:show-field-type-icons="showFieldTypeIcons" v-bind:allow-property-add="allowPropertyAdd" v-bind:allow-property-edit="allowPropertyEdit" v-bind:allow-property-remove="allowPropertyRemove"></ui-form-control>
+</div>

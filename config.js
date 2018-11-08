@@ -7,6 +7,11 @@ exports.config = {
                 name: 'fileManagerHelper',
                 className: 'FileManagerHelper',
                 file: path.resolve(path.join(__dirname, './lib/fileManagerHelper.js'))
+            },
+            {
+                name: 'uiFormHelper',
+                className: 'UiFormHelper',
+                file: path.resolve(path.join(__dirname, './lib/uiFormHelper.js'))
             }
         ],
         fileManager: {

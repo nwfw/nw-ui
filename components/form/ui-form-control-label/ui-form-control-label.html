@@ -1,0 +1,7 @@
+<label :for="identifier" :class="['ui-form-field-label', control.formControl.replace(/form-control-/, '') + '-label']">
+    <span class="ui-form-row-label-text">
+        <span class="ui-form-row-label-icon fa fa-exclamation-triangle" :title="getErrorText()" v-nwtooltip="1" :data-tooltip-data="toJson({immediate: true, classes: ['tooltip-error']})" v-if="control.error"></span>
+        {{ control.name }}
+    </span>
+    <slot name="ui-form-row-label-contents"></slot>
+</label>

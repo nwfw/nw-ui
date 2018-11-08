@@ -1,0 +1,26 @@
+<li :class="methods.getTreeItemClasses(item)">
+    <div class="tree-item-contents">
+        <div class="tree-item" @click="itemClick">
+            <div class="tree-item-info">
+                <span :class="getIconClasses()" @click.self.stop.prevent="itemIconClick"></span>
+                <input class="tree-item-selection-checkbox" v-if="selectMode && !isRoot" type="checkbox" @change="methods.toggleItemInSelection(item)" :checked="methods.isItemInSelection(item)" :title="translate('Click to toggle selection, hold CTRL/CMD to toggle all children')" />
+                <span class="tree-item-name" v-html="item.node.name"></span>
+            </div>
+            <div class="tree-item-tools">
+                <span v-if="!isRoot && options.allowDragdrop" class="fa fa-arrows drag-handle" :title="translate('Drag')"></span>
+                <a v-if="options.allowCreating" href="#" class="fa fa-plus" :title="translate('Add child')" @click.prevent="methods.addChild(item)"></a>
+                <a href="#" v-if="options.allowCloning && !isRoot" :class="['fa fa-copy']" :title="translate('Clone')" @click.prevent="methods.cloneItem(item)"></a>
+                <icon-link-confirm v-if="!isRoot && options.allowDeleting" v-bind:title="translate('Delete')" v-bind:icon-classes="['fa fa-trash']" v-bind:action="deleteItemHandler" v-bind:skip-notification="false" v-bind:confirm-notification-text="translate('Click again to delete')" v-bind:reset-confirm-notification-text="''"></icon-link-confirm>
+            </div>
+        </div>
+        <ul v-if="isRoot" :class="['tree-item-children tree-item-children-container', {'no-drop': item.node.disabled || item.node.readonly}]" v-dragula="dragulaArray" :drake="drakeId">
+            <tree-item v-if="methods.hasChildren(item)" v-bind:methods="methods" v-bind:options="options" v-bind:list-transition="listTransition" v-bind:select-mode="selectMode" v-for="(child, index) in item.children" :key="item.node.name + '_child_' + index" v-bind:item="child" />
+        </ul>
+        <ul v-else-if="methods.hasChildren(item)" :class="['tree-item-children tree-item-children-container', {'no-drop': item.node.disabled || item.node.readonly}]">
+            <tree-item v-bind:methods="methods" v-bind:options="options" v-bind:list-transition="listTransition" v-bind:select-mode="selectMode" v-for="(child, index) in item.children" :key="item.node.name + '_child_' + index" v-bind:item="child" />
+        </ul>
+        <ul v-else :class="['tree-item-children tree-item-children-container tree-item-no-children', {'no-drop': item.node.disabled || item.node.readonly}]">
+            <li class="drop-children-zone"></li>
+        </ul>
+    </div>
+</li>
