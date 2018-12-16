@@ -3,6 +3,7 @@ exports.globalComponentDir = [
     path.resolve(path.join(__dirname, './components/file-manager')),
     path.resolve(path.join(__dirname, './components/control')),
     path.resolve(path.join(__dirname, './components/ui')),
+    path.resolve(path.join(__dirname, './components/object-editor')),
     path.resolve(path.join(__dirname, './components/form')),
 ];
 exports.globalComponentMapping = [
@@ -77,7 +78,31 @@ exports.globalComponentMapping = [
                     components: {}
                 }
             }
-        }
+        },
+        'editor-fieldset': {
+            name: 'editor-fieldset'
+        },
+        'object-editor': {
+            name: 'object-editor'
+        },
+        'property-editor': {
+            name: 'property-editor'
+        },
+        'array-editor': {
+            name: 'array-editor'
+        },
+        'array-member-editor': {
+            name: 'array-member-editor'
+        },
+        'value-editor': {
+            name: 'value-editor'
+        },
+        'object-editor-debug': {
+            name: 'object-editor-debug'
+        },
+        'vars-text-input': {
+            name: 'vars-text-input'
+        },
     }
 ];
 

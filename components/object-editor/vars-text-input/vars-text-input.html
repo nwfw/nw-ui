@@ -1,0 +1,15 @@
+<span class="input autocomplete-wrapper vars-autocomplete-wrapper">
+    <div class="autocomplete-div-wrapper">
+        <div class="autocomplete-input-wrapper">
+            <div class="autocomplete-input-inner">
+                <a href="#" :class="['fa fa-eye', {'invisible-element': !hasVars}]" @click.prevent="validateValue" @mouseout="hideProcessedValue"></a>
+                <input v-if="type == 'text'" type="text" :class="['autocomplete-input', inputClass]" :value="currentValue" @keyup="handleKeyup" @keydown="handleKeydown" @blur="handleBlur" @change="handleChange" />
+                <textarea v-else-if="type == 'textarea'" type="text" :class="['autocomplete-input autocomplete-textarea', inputClass]" :value="currentValue" @keyup="handleKeyup" @keydown="handleKeydown" @blur="handleBlur" @change="handleChange"></textarea>
+            </div>
+            <transition name="fade-fast">
+                <div class="user-var-processed-value" v-if="processedValue" v-html="processedValue"></div>
+            </transition>
+            <autocomplete-suggestion-list :search="newVarSearch" :search-help="getNewVarSearchHelp()" v-if="showSuggestions" :styles="listStyles" :class="{'suggest-top': showSuggestionsTop}" :title="'Variables'" :active-suggestion-index="activeSuggestionIndex" :select-item="selectItem" :suggestions="matchedSuggestions" :get-suggestion-item="getSuggestionItem"></autocomplete-suggestion-list>
+        </div>
+    </div>
+</span>

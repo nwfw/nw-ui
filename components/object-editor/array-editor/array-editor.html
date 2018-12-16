@@ -1,0 +1,53 @@
+<div class="array-editor-wrapper">
+    <editor-fieldset :title="title" :show-title="!componentOptions.viewerMode.enabled" class="array-editor-fieldset" :fieldset-class="getFieldsetClasses()" :ref="'object-editor-section-fieldset'" :initial-minimized="componentOptions.childrenMinimized" :prevent-minimize="componentOptions.preventMinimize" :render-fieldset="componentOptions.renderRootFieldset">
+        <template slot="legend-title-prepend">
+            <slot name="legend-title-prepend"></slot>
+        </template>
+        <template slot="legend-append">
+             <span class="legend-buttons-section debug-button-wrapper" v-if="componentOptions.debug && (isRoot || !componentOptions.propagateOptions)">
+                <a href="#" @click.prevent="toggleShowDebug" class="button-link">
+                    <span :class="['fa fa-bug', {'semi-transparent': !showDebug}]"></span>
+                </a>
+            </span>
+            <span class="legend-buttons-section add-buttons-wrapper" v-if="componentOptions.allowAdding && !componentOptions.viewerMode.enabled">
+                <a href="#" class="button-link add-item add-typed-item" @click.prevent="newObjectItem" :title="translate('Add object')" v-if="addingTypeAllowed('object')">
+                    <span class="plus-icon fa fa-plus"></span>
+                    <span class="add-type-symbol" v-html="'{}'"></span>
+                </a>
+                <a href="#" class="button-link add-item add-typed-item" @click.prevent="newArrayItem" :title="translate('Add array')" v-if="addingTypeAllowed('array')">
+                    <span class="plus-icon fa fa-plus"></span>
+                    <span class="add-type-symbol" v-html="'[]'"></span>
+                </a>
+                <a href="#" class="button-link add-item add-typed-item" @click.prevent="newNumberItem" :title="translate('Add number')" v-if="addingTypeAllowed('number')">
+                    <span class="plus-icon fa fa-plus"></span>
+                    <span class="add-type-symbol" v-html="'8'"></span>
+                </a>
+                <a href="#" class="button-link add-item add-typed-item" @click.prevent="newBooleanItem" :title="translate('Add boolean')" v-if="addingTypeAllowed('boolean')">
+                    <span class="plus-icon fa fa-plus"></span>
+                    <span class="add-type-symbol fa fa-check"></span>
+                </a>
+                <a href="#" class="button-link add-item add-item-visible" @click.prevent="newItem" :title="translate('Add value')">
+                    <span class="plus-icon fa fa-plus"></span>
+                </a>
+            </span>
+            <span class="legend-buttons-section toggle-all-section" v-if="hasMinimizableChildren">
+                <a href="#" class="legend-tool button-link toggle-all-button" @click.prevent="toggleAll">
+                    <span class="fa fa-caret-up"></span>
+                    <span class="fa fa-caret-down"></span>
+                </a>
+            </span>
+            <slot name="editor-item-append"></slot>
+        </template>
+        <template slot="main">
+            <transition-expand>
+                <object-editor-debug :object-editor-options="objectEditorOptions" v-if="showDebug && componentOptions.debug" ref="object-editor-debug"></object-editor-debug>
+            </transition-expand>
+            <div :class="['array-member-list-wrapper', 'drag-list-wrapper']" v-dragula="this.array" :drake="drakeName" :service="serviceName" v-if="dragulaInitialized">
+                <template v-for="(value, index) in array">
+                    <array-member-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" :key="'member_' + index" :ref="'member-editor_' + index" :index="index" :original-index="index" :array="array" :clone-item="cloneItem" :move-item="moveItem" :remove-item="removeItem" :on-change="arrayChanged" :initial-minimized="allMinimized"></array-member-editor>
+                </template>
+            </div>
+        </template>
+    </editor-fieldset>
+    <div class="array-member-list-wrapper drag-mirror-container"></div>
+</div>

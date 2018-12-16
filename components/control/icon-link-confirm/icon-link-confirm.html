@@ -13,6 +13,9 @@
                 <span :class="getIconConfirmClasses()"></span>
                 <span v-if="confirmText" v-html="confirmText"></span>
                 <span v-else-if="text" v-html="text"></span>
+                <span v-if="confirmTooltip" :class="['confirm-tooltip', 'confirm-tooltip-' + getConfirmTooltipPosition()]">
+                    <span class="confirm-tooltip-text" v-html="confirmTooltip"></span>
+                </span>
             </a>
         </span>
     </template>

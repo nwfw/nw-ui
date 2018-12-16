@@ -1,0 +1,387 @@
+.object-editor-wrapper {
+
+    & .object-editor-row {
+        padding: 2px 5px;
+        margin: 3px 0;
+
+
+        & .value-editor-wrapper {
+            /*width: 200px;*/
+            display: flex;
+            align-items: center;
+            /*max-width: 100%;*/
+
+            & .value-editor-input {
+                flex: 1 1 auto;
+                font-size: 0.9em;
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid #999999;
+                padding: 2px 6px 3px 6px;
+
+                &.quasi-value-editor-input {
+                    /*flex: 1 1 100%;*/
+                    white-space: nowrap;
+                    overflow: auto;
+                    /*max-width: 100%;*/
+                    text-overflow: auto;
+                    padding: 2px 6px;
+                }
+
+                &.quasi-value-editor-checkbox {
+                    border: none;
+                }
+            }
+        }
+
+        &.vars-input-row {
+            & label {
+                & span.label {
+                    margin-right: -20px;
+                    padding-right: 25px;
+                }
+            }
+        }
+
+        &.editor-row-columns {
+            display: flex;
+
+            & .column-label {
+                flex: 0 0 90px;
+                justify-content: flex-end;
+            }
+
+
+            & .object-editor-columns-wrapper {
+                display: flex;
+                align-items: center;
+                margin-left: 10px;
+
+                & .object-editor-column {
+                    flex: 1 1 auto;
+
+                    & label {
+
+                        & span.label {
+                            color: #999999;
+                            text-align: right;
+                            padding-right: 10px;
+                            padding-left: 15px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    & .object-editor-fieldset {
+
+
+    }
+
+    & .editor-fieldset-wrapper {
+
+        & .nw-editor-fieldset {
+            position: relative;
+
+            & > .editor-legend {
+                text-align: left;
+
+                & .legend-prepend {
+
+                    & .toggle-fieldset {
+
+                        & .restore {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            & > legend {
+                margin: 0;
+
+
+                & .legend-prepend {
+                    transition-property: padding-left;
+                    transition-duration: 0.3s;
+                    transition-timing-function: ease-in-out;
+                }
+
+                & .legend-append {
+                    display: flex;
+                    align-items: center;
+                    position: absolute;
+                    right: 5px;
+                    top: 0;
+                    transform: translateY(-2px);
+                    transition-property: opacity;
+                    transition-duration: 0.3s;
+                    transition-timing-function: ease-in;
+
+                }
+
+                & .toggle-fieldset {
+                    transition-property: padding;
+                    transition-duration: 0.3s;
+                    transition-timing-function: ease-in-out;
+                }
+
+                & .legend-title {
+                    transition-property: font-size, color;
+                    transition-duration: 0.3s;
+                    transition-timing-function: ease-in-out;
+
+                    & .editor-item-indicator {
+                        margin-right: 5px;
+                        padding: 2px 3px 3px 3px;
+                        font-size: 0.8em;
+
+                        &.editor-item-indicator-string {
+                            background: #CC99CC99;
+                        }
+
+                        &.editor-item-indicator-number {
+                            background: #CCCC9999;
+                        }
+
+                        &.editor-item-indicator-boolean {
+                            background: #99CCCC99;
+                        }
+
+                        &.editor-item-indicator-object {
+                            background: #FFCC3399;
+                        }
+
+                        &.editor-item-indicator-array {
+                            background: #FF33CC99;
+                        }
+
+                        &.editor-item-indicator-property {
+                            background: #CCFF3399;
+                            color: #333333;
+                        }
+                    }
+                }
+
+                & .legend-buttons-section {
+                    padding: 0 8px;
+
+                    & .button-link {
+                        height: 1.5em;
+                        display: inline-flex;
+                        align-items: center;
+                    }
+                }
+            }
+            &.value-fieldset-object {
+                border-color: #FFCC3399;
+            }
+            &.value-fieldset-array {
+                border-color: #FF33CC99;
+            }
+            &.value-fieldset-boolean {
+                border-color: #99CCCC99;
+            }
+            &.value-fieldset-number {
+                border-color: #CCCC9999;
+            }
+            &.value-fieldset-string {
+                border-color: #CC99CC99;
+            }
+            &.value-fieldset-property {
+                border-color: #CCFF3399;
+            }
+
+            &.object-fieldset-viewer{
+                border-color: transparent;
+            }
+
+            &.minimized-fieldset {
+                border-color: transparent;
+                padding: 0;
+
+                & > .editor-legend {
+                    & .legend-prepend {
+                        padding-left: 10px;
+
+                        & .toggle-fieldset {
+                            padding-top: 0px;
+                            padding-bottom: 0px;
+                            & .minimize {
+                                display: none;
+                            }
+                            & .restore {
+                                display: unset;
+                            }
+                        }
+                    }
+
+                    & .legend-title {
+                        font-size: 0.75em;
+                    }
+
+                    & .legend-append {
+                        opacity: 0;
+                        pointer-events: none;
+                    }
+
+                    & .legend-prepend > a,
+                    & .legend-prepend > span {
+                        display: none;
+                        opacity: 0;
+                        pointer-events: none;
+
+                        &.toggle-fieldset {
+                            display: inline-block;
+                            opacity: 1;
+                            pointer-events: all;
+                        }
+                    }
+                }
+                & .fieldset-contents {
+                    /*display: none;*/
+                }
+            }
+        }
+
+        &.object-editor-fieldset {
+            & > .nw-editor-fieldset {
+
+                & .legend-title {
+                    display: inline-block;
+                    min-height: 20px;
+                }
+            }
+        }
+
+        &.value-editor-root {
+            & > .editor-fieldset-wrapper {
+                & > .nw-editor-fieldset {
+                    & > legend {
+                        margin: 0;
+                        & .editor-item-indicator {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    & .root-object-fieldset {
+        & > .fieldset-contents {
+            & > .editor-fieldset-wrapper {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    & .object-editor-debug {
+        padding: 0;
+        border: 1px solid;
+        margin: 0px;
+        margin-bottom: 10px;
+
+        & .object-editor-debug-title {
+            text-align: center;
+            border-bottom: 1px dotted;
+        }
+
+        & .object-editor-debug-form-row {
+            display: grid;
+            align-items: stretch;
+            text-align: center;
+            border-bottom: 1px dotted;
+            /*grid-template-columns: repeat(3, 33%);*/
+
+            & .object-editor-debug-item {
+                border-right: 1px dotted;
+                padding: 5px 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                & .object-debug-checkbox-label {
+                    flex: 1 0 auto;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    &:hover {
+                        text-shadow: 0 0 2px;
+                    }
+                }
+
+                &.object-editor-debug-item-last {
+                    border-right: none;
+                }
+            }
+        }
+
+    }
+
+    & label {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 100px auto;
+        /*grid-template-columns: max-content auto;*/
+    }
+
+    & span.label {
+        /*flex: 0 1 100px;*/
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    & .fixed-label {
+        height: 100%;
+
+        &.fixed-label-top {
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+    }
+
+    & span.input {
+       flex: 0 0 auto;
+    }
+}
+
+.rename-property-link {
+    margin-left: 5px;
+}
+
+.property-name-wrapper {
+
+    & .property-rename-wrapper {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 5px;
+
+        & .property-name-input {
+            transition-property: border-color, color, outline-color;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-in-out;
+            padding: 1px 6px 2px 6px;
+        }
+
+        &.name-invalid {
+            & .property-name-input {
+                border-color: #CC0000;
+                color: #FF3333;
+
+                &:focus,
+                &:active {
+                    outline: auto 5px #FF0000;
+                    outline-offset: -2px;
+                }
+            }
+        }
+
+        & .property-rename-button {
+            margin-left: 5px;
+        }
+    }
+}

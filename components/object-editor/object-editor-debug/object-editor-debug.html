@@ -1,0 +1,25 @@
+<div class="object-editor-debug">
+    <div class="object-editor-debug-title">
+        <span class="debug-title-text" v-html="translate('Debug')"></span>
+        <a href="#" class="fa fa-refresh" @click.prevent="reset" :title="translate('Reset')"></a>
+    </div>
+    <div class="object-editor-debug-form">
+        <div class="object-editor-debug-form-row" v-for="(group, groupIndex) in groups" :style="{'grid-template-columns': 'repeat(' + columnCount + ', calc(100% / ' + columnCount + '))'}">
+            <div :class="['object-editor-debug-item', {'object-editor-debug-item-last': i == (columnCount - 1)}]" v-for="(item, i) in group">
+                <label class="object-debug-checkbox-label">
+                    <input type="checkbox" :checked="getModel(item)" @change="valueChanged(item)" />
+                    <span class="debug-label-text" v-html="item.split('.')[0]"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="object-editor-debug-form-row" :style="{'grid-template-columns': 'repeat(' + columnCount + ', calc(100% / ' + columnCount + '))'}">
+            <div class="object-editor-debug-item" v-for="type in defaultOptions.allowAddingTypes">
+                <label class="object-debug-checkbox-label">
+                    <input type="checkbox" :checked="objectEditorOptions.allowAddingTypes.indexOf(type) != -1" @click="toggleAllowedAddingType(type)" />
+                    <span class="debug-label-text" v-html="translate('Add {1}', '', [type])"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="editor-fieldset-wrapper">
+    <template v-if="renderFieldset">
+        <fieldset :class="['nw-editor-fieldset', {'minimized-fieldset': this.minimized}, fieldsetClass]">
+            <legend class="editor-legend">
+                <span class="legend-prepend">
+                    <slot name="legend-prepend-before"></slot>
+                    <a href="#" class="button-link legend-tool toggle-fieldset" @click.prevent="toggleMinimized" v-if="!preventMinimize">
+                        <span class="restore fa fa-caret-down"></span>
+                        <span class="minimize fa fa-caret-up"></span>
+                    </a>
+                    <slot name="legend-prepend"></slot>
+                </span>
+                <span class="legend-title" v-if="showTitle">
+                    <slot name="legend-title-prepend"></slot>
+                    <span class="legend-title-text" v-if="title" v-html="title"></span>
+                    <slot name="legend-title-append"></slot>
+                </span>
+                <span class="legend-append">
+                    <slot name="legend-append"></slot>
+                </span>
+            </legend>
+            <transition-expand :after-enter="afterEnter" :after-leave="afterLeave">
+                <div class="fieldset-contents" v-if="!minimized">
+                    <slot name="main"></slot>
+                </div>
+            </transition-expand>
+        </fieldset>
+    </template>
+    <template v-else>
+        <slot name="main"></slot>
+    </template>
+</div>

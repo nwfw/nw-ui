@@ -1,0 +1,40 @@
+<div class="object-editor-property object-editor-row object-editor-flex-row" v-if="showEditor">
+    <template v-if="!isArrayControl() && !isObjectControl() && componentOptions.allowReordering">
+        <span :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1 || componentOptions.viewerMode.enabled}]" :title="translate('Drag to reorder')"></span>
+    </template>
+    <span class="input">
+        <array-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" v-if="isArrayControl()" :array="array[index]" :title="'' + index" ref="object-value-editor">
+            <template slot="editor-item-prepend" v-if="!componentOptions.viewerMode.enabled">
+                <span v-if="componentOptions.allowReordering" :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1}]" :title="translate('Drag to reorder')"></span>
+            </template>
+            <template slot="editor-item-append"  v-if="!componentOptions.viewerMode.enabled">
+                <a href="#" class="legend-tool button-link fa fa-clone" @click.prevent="cloneItem(index)" v-if="componentOptions.allowAdding && componentOptions.allowCloning"></a>
+                <icon-link-confirm v-if="componentOptions.allowChildDeleting" class="legend-tool button-link" :confirm-classes="'remove-item'" v-bind:title="translate('Remove')" v-bind:icon-classes="['fa fa-trash']" v-bind:action="remove" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+            </template>
+        </array-editor>
+        <object-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" v-else-if="isObjectControl()" :object="array[index]" :title="'' + index" ref="object-value-editor">
+            <template slot="editor-item-prepend" v-if="!componentOptions.viewerMode.enabled">
+                <span v-if="componentOptions.allowReordering" :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1}]" :title="translate('Drag to reorder')"></span>
+            </template>
+            <template slot="editor-item-append" v-if="!componentOptions.viewerMode.enabled">
+                <a href="#" class="legend-tool button-link fa fa-clone" @click.prevent="cloneItem(index)" v-if="componentOptions.allowAdding && componentOptions.allowCloning"></a>
+                <icon-link-confirm v-if="componentOptions.allowChildDeleting" v-bind:title="translate('Remove')" class="legend-tool button-link" :confirm-classes="'remove-item'" v-bind:icon-classes="['fa fa-trash']" v-bind:action="remove" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+            </template>
+        </object-editor>
+        <template v-else>
+            <template v-if="componentOptions.viewerMode.enabled">
+                <span v-if="array[index] === true || array[index] === false" :class="['value-editor-input quasi-value-editor-input quasi-value-editor-checkbox fa', {'fa-check-square-o': array[index], 'fa-square-o': !array[index]}]"></span>
+                <span v-else class="quasi-value-editor-input value-editor-input" v-html="array[index]"></span>
+            </template>
+            <input type="checkbox" v-else-if="isBooleanControl()" :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.boolean="array[index]" @change="valueChanged" ref="object-value-editor" />
+            <input type="number" v-else-if="isNumberControl()" :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="array[index]" @input="valueChanged" ref="object-value-editor"  />
+            <template v-else>
+                <input type="text" :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="array[index]" @input="valueChanged" ref="object-value-editor"  />
+            </template>
+        </template>
+    </span>
+    <template v-if="!isArrayControl() && !isObjectControl() && !componentOptions.viewerMode.enabled">
+        <a href="#" class="fa fa-clone row-inline-tool row-inline-tool-right" @click.prevent="cloneItem(index)" v-if="componentOptions.allowAdding && componentOptions.allowCloning"></a>
+        <icon-link-confirm v-if="componentOptions.allowChildDeleting" v-bind:title="translate('Remove')" class="button-link" :confirm-classes="'remove-item'"  v-bind:icon-classes="['fa fa-trash']" v-bind:action="remove" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+    </template>
+</div>

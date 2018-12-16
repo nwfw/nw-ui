@@ -8,6 +8,34 @@
 
         & .icon-link-confirm-checkbox {
             opacity: 0;
+
+            & .confirm-tooltip {
+                display: inline-block;
+                position: absolute;
+                z-index: 11;
+                top: -10px;
+                transform: translate(-50%, -100%);
+                left: 50%;
+                padding: 3px 5px;
+                pointer-events: none;
+
+                &.confirm-tooltip-left {
+                    top: 50%;
+                    left: -10px;
+                    transform: translate(-100%, -50%);
+                }
+
+                &.confirm-tooltip-right {
+                    top: 50%;
+                    left: calc(100% + 10px);
+                    transform: translateY(-50%);
+                }
+
+                &.confirm-tooltip-down {
+                    top: calc(100% + 10px);
+                    transform: translateX(-50%);
+                }
+            }
         }
 
         & .icon-link-confirm-checkbox-countdown {

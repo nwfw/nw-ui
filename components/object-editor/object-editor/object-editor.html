@@ -1,0 +1,48 @@
+<editor-fieldset :title="title" :class="['object-editor-fieldset', {'viewer-mode': isRoot && componentOptions.viewerMode.enabled}]" :fieldset-class="getFieldsetClasses()" ref="object-editor-section-fieldset" :initial-minimized="isRoot ? componentOptions.initialMinimized : componentOptions.childrenMinimized" :prevent-minimize="componentOptions.preventMinimize" :render-fieldset="componentOptions.renderRootFieldset">
+    <template slot="legend-prepend-before">
+        <slot name="editor-item-prepend"></slot>
+    </template>
+    <template slot="legend-title-prepend">
+        <slot name="legend-title-prepend"></slot>
+    </template>
+    <template slot="legend-append">
+        <span class="legend-buttons-section debug-button-wrapper" v-if="componentOptions.debug">
+            <a href="#" @click.prevent="toggleShowDebug" class="button-link">
+                <span :class="['fa fa-bug', {'semi-transparent': !showDebug}]"></span>
+            </a>
+        </span>
+        <span class="legend-buttons-section add-buttons-wrapper" v-if="componentOptions.allowAdding">
+            <a href="#" class="button-link add-item add-typed-item" @click.prevent="newObjectItem" :title="translate('Add object')" v-if="addingTypeAllowed('object')">
+                <span class="plus-icon fa fa-plus"></span>
+                <span class="add-type-symbol" v-html="'{}'"></span>
+            </a>
+            <a href="#" class="button-link add-item add-typed-item" @click.prevent="newArrayItem" :title="translate('Add array')" v-if="addingTypeAllowed('array')">
+                <span class="plus-icon fa fa-plus"></span>
+                <span class="add-type-symbol" v-html="'[]'"></span>
+            </a>
+            <a href="#" class="button-link add-item add-typed-item" @click.prevent="newNumberItem" :title="translate('Add number')" v-if="addingTypeAllowed('number')">
+                <span class="plus-icon fa fa-plus"></span>
+                <span class="add-type-symbol" v-html="'8'"></span>
+            </a>
+            <a href="#" class="button-link add-item add-typed-item" @click.prevent="newBooleanItem" :title="translate('Add boolean')" v-if="addingTypeAllowed('boolean')">
+                <span class="plus-icon fa fa-plus"></span>
+                <span class="add-type-symbol fa fa-check"></span>
+            </a>
+            <a href="#" class="button-link add-item add-item-visible" @click.prevent="newItem" :title="translate('Add value')" v-if="addingTypeAllowed('string')">
+                <span class="plus-icon fa fa-plus"></span>
+            </a>
+        </span>
+        <slot name="editor-item-append"></slot>
+    </template>
+    <template slot="main">
+        <transition-expand>
+            <object-editor-debug :object-editor-options="objectEditorOptions" v-if="showDebug && componentOptions.debug" ref="object-editor-debug"></object-editor-debug>
+        </transition-expand>
+        <property-editor v-if="componentOptions.hiddenFieldPaths.indexOf(getPropertyPath(name)) == -1" :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="componentOptions" :key="name" :ref="'property-editor_' + name" v-for="(value, name) in object" :name="name" :original-name="name" :title="''" :object="object" :clone-item="cloneItem" :remove-item="removeItem" :rename-item="renameItem" :on-change="objectChanged" :fieldset-class="getPropertyFieldsetClass(name)">
+            <template slot="legend-title-prepend" v-if="componentOptions.showTypeIndicators && getTitlePrependText(name)">
+                <span v-if="isObject(name) || isArray(name)" :class="['editor-item-indicator', 'editor-item-indicator-property']" v-html="'property'"></span>
+                <span v-else :class="['editor-item-indicator', 'editor-item-indicator-' + getTitlePrependText(name)]" v-html="getTitlePrependText(name)"></span>
+            </template>
+        </property-editor>
+    </template>
+</editor-fieldset>

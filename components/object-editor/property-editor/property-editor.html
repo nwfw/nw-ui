@@ -1,0 +1,45 @@
+<editor-fieldset :title="getTitle()" ref="object-editor-section-fieldset" class="property-editor-fieldset" :fieldset-class="'value-fieldset-' + fieldsetClass" :initial-minimized="isRoot ? componentOptions.initialMinimized : componentOptions.childrenMinimized" :prevent-minimize="componentOptions.preventMinimize" :render-fieldset="componentOptions.renderFieldset">
+    <template slot="legend-append" v-if="showEditor">
+        <a href="#" class="legend-tool button-link" :title="translate('Clone')" v-on:click.prevent="cloneItem(name)" v-if="componentOptions.allowAdding && componentOptions.allowCloning">
+            <span class="fa fa-clone"></span>
+        </a>
+        <icon-link-confirm v-if="componentOptions.allowDeleting" v-bind:title="translate('Remove')" class="legend-tool button-link" :confirm-classes="'remove-item'" :icon-classes="['fa fa-trash']" v-bind:action="removeCurrentItem" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+    </template>
+    <template slot="legend-title-prepend">
+        <slot name="legend-title-prepend"></slot>
+    </template>
+    <template slot="legend-title-append">
+        <span class="property-name-wrapper">
+            <span class="legend-title-text" v-html="name" v-if="!renaming || !showEditor"></span>
+            <a href="#" class="fa fa-pencil rename-property-link" :title="translate('Rename')" @click.prevent="toggleRenaming" v-if="!componentOptions.viewerMode.enabled && showEditor && !renaming && componentOptions.allowRenaming"></a>
+            <span :class="['property-rename-wrapper', {'name-invalid': !nameValid}]" v-if="showEditor && renaming">
+                <input type="text" :class="['property-name-input']" v-bind:name="'name_' + name" v-model="currentName" @input="checkName" @blur="handleBlur" @keydown.esc="cancelRenaming" @keydown.enter="handleEnter"/>
+                <a href="#" :class="['property-rename-button fa fa-check']" :title="translate('Update')" @click.prevent="nameChanged" v-if="nameValid"></a>
+                <span :class="['property-rename-button fa fa-exclamation-triangle remove-item']" :title="translate('Name is not valid')" v-if="!nameValid"></span>
+                <a href="#" class="property-rename-button fa fa-ban remove-item" :title="translate('Cancel')" @click.prevent="cancelRenaming"></a>
+            </span>
+        </span>
+    </template>
+    <template slot="main">
+        <div class="object-editor-property object-editor-row object-editor-flex-row" v-if="showEditor && !componentOptions.renderFieldset && (componentOptions.allowRenaming || (!componentOptions.allowRenaming && renaming))">
+            <label>
+                <span class="label" v-html="translate('Name')"></span>
+                <span class="input">
+                    <input type="text" :class="['property-name-input']" v-bind:name="'name_' + name" v-model="currentName" @input="checkName" @blur="handleBlur" @keydown.esc="cancelRenaming" @keydown.enter="handleEnter"/>
+                </span>
+            </label>
+        </div>
+        <div class="object-editor-property object-editor-row object-editor-flex-row" v-if="showEditor">
+            <label>
+                <!-- <span :class="['label fixed-label', {'fixed-label-top': isObjectControl()}]" v-if="!componentOptions.allowRenaming" v-html="name"></span> -->
+                <span :class="['label fixed-label', {'fixed-label-top': isObjectControl()}]" v-if="!componentOptions.renderFieldset" v-html="getPropertyLabel(name)"></span>
+                <span class="input">
+                    <value-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="getComponentOptions()" :item="object[name]" :title="name" @change="valueChanged" ref="value-editor"></value-editor>
+                </span>
+                <template v-if="showEditor && !componentOptions.renderFieldset">
+                    <icon-link-confirm v-if="componentOptions.allowDeleting" v-bind:title="translate('Remove')" class="legend-tool button-link" :confirm-classes="'remove-item'" :icon-classes="['fa fa-trash']" v-bind:action="removeCurrentItem" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
+                </template>
+            </label>
+        </div>
+    </template>
+</editor-fieldset>

@@ -1,0 +1,23 @@
+<div class="value-editor-wrapper">
+    <array-editor :parent-path="getChildrenParentPath()" :property-path="propertyPath" :object-editor-options="getComponentOptions()" v-if="isArray()" :array="item" :title="title" @change="handleChange" ref="value-editor-control" >
+        <template slot="legend-title-prepend" v-if="componentOptions.showTypeIndicators">
+            <span :class="['editor-item-indicator editor-item-indicator-array']" v-html="'array (' + item.length + ')'"></span>
+        </template>
+    </array-editor>
+    <object-editor :parent-path="getChildrenParentPath()" :property-path="propertyPath" :object-editor-options="getComponentOptions()" v-else-if="isObject()" :object="item" :title="title" @change="handleChange" ref="value-editor-control">
+        <template slot="legend-title-prepend"  v-if="componentOptions.showTypeIndicators">
+            <span :class="['editor-item-indicator editor-item-indicator-object']" v-html="'object'"></span>
+        </template>
+    </object-editor>
+    <template v-else>
+        <template v-if="componentOptions.viewerMode.enabled">
+            <span v-if="isBoolean()" :class="['value-editor-input quasi-value-editor-input quasi-value-editor-checkbox fa', {'fa-check-square-o': valuePlaceholder, 'fa-square-o': !valuePlaceholder}]"></span>
+            <span v-else class="value-editor-input quasi-value-editor-input " v-html="valuePlaceholder"></span>
+
+        </template>
+        <input type="checkbox" v-else-if="isBoolean()" :readonly="isReadonly()" :disabled="isDisabled()"  :class="'value-editor-input'" v-model.boolean="valuePlaceholder" @change="placeholderChanged" ref="value-editor-control" />
+        <input type="number" v-else-if="isNumber()" :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
+        <input type="text" v-else :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
+        <!-- <vars-text-input v-else :input-class="'value-editor-input'" v-model="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control" /> -->
+    </template>
+</div>

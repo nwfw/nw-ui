@@ -55,6 +55,10 @@ exports.component = {
         'text',
         // Text to display for confirm link/icon
         'confirmText',
+        // Flag to force confirm tooltip rendering below checkbox
+        'confirmTooltipPosition',
+        // Text for confirm checkbox tooltip
+        'confirmTooltip',
         // Title html attribute for link
         'title',
         // Title html attribute for confirm checkbox
@@ -99,6 +103,20 @@ exports.component = {
                 confirmTitle = this.confirmTitle;
             }
             return confirmTitle;
+        },
+        getConfirmTooltipData: function(){
+            return JSON.stringify({
+                classes: ['tooltip-warning'],
+                immediate: true,
+                showCloseLink: true
+            });
+        },
+        getConfirmTooltipPosition () {
+            if (this.confirmTooltipPosition) {
+                return this.confirmTooltipPosition;
+            } else {
+                return 'left';
+            }
         },
         getIconClasses: function(){
             let classes = ['icon-link-confirm'];
