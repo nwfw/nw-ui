@@ -17,42 +17,46 @@
     display: flex;
     flex-flow: column;
     width: 100%;
-    background-color: var(--tabs-background-color);
+    /*background-color: var(--tabs-background-color);*/
+
+    & .hidden-element {
+        display: none;
+    }
 
     & .nw-tab-links {
         flex: 1 1 auto;
         display: flex;
         flex-flow: row;
-        border-bottom: 1px solid var(--tabs-border-color);
+        /*border-bottom: 1px solid var(--tabs-border-color);*/
         padding: 0 5px;
 
         & .nw-tab-link {
             flex: 0 1 auto;
             min-width: 100px;
             padding: 3px 5px;
-            border: 1px solid var(--tabs-border-color);
-            background-color: var(--tabs-link-background);
-            color: var(--tabs-link-color);
+            /*border: 1px solid var(--tabs-border-color);*/
+            /*background-color: var(--tabs-link-background);*/
+            /*color: var(--tabs-link-color);*/
             margin-right: 5px;
             margin-bottom: -1px;
             text-align: center;
-            transition-property: color, background, border-bottom-color;
+            transition-property: opacity, color, background, border-bottom-color;
             transition-duration: var(--tabs-link-animation-duration);
             transition-timing-function: ease-in-out;;
 
             &:hover {
-                background-color: var(--tabs-link-hovered-background);
-                color: var(--tabs-link-hovered-color);
+                /*background-color: var(--tabs-link-hovered-background);*/
+                /*color: var(--tabs-link-hovered-color);*/
             }
 
             &.active-tab-link {
-                border-bottom: 1px solid var(--tabs-background-color);
-                color: var(--tabs-active-link-color);
-                background-color: var(--tabs-active-link-background);
+                /*border-bottom: 1px solid var(--tabs-background-color);*/
+                /*color: var(--tabs-active-link-color);*/
+                /*background-color: var(--tabs-active-link-background);*/
 
                 &:hover {
-                    background-color: var(--tabs-active-link-background);
-                    color: var(--tabs-active-link-color);
+                    /*background-color: var(--tabs-active-link-background);*/
+                    /*color: var(--tabs-active-link-color);*/
                 }
             }
 
@@ -62,7 +66,7 @@
 
     & .nw-tab-wrappers {
         flex: 1 1 auto;
-        border: 1px solid var(--tabs-border-color);
+        /*border: 1px solid var(--tabs-border-color);*/
         border-top: none;
 
         & .nw-tab {

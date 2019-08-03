@@ -38,6 +38,10 @@ exports.component = {
         value: {
             default: '',
         },
+        minChars: {
+            type: Number,
+            default: 1
+        },
         tabindex: {
             type: String,
             default: '-1'
@@ -91,6 +95,11 @@ exports.component = {
                 this.updateModel();
                 this.resetData();
             }, 500);
+            this.$emit('blur', e);
+        },
+
+        handleFocus(e) {
+            this.$emit('focus', e);
         },
 
         /**
@@ -116,6 +125,9 @@ exports.component = {
          */
         handleKeyUp: function(e){
             let input = this.$el.querySelector('.autocomplete-text-input');
+            if (this.minChars && input.value.length < this.minChars) {
+                return;
+            }
             if (_.includes(this.ignoreKeys, e.key)) {
                 e.preventDefault();
             } else if (this.showList && this.autocompleteList.length && _.includes(['ArrowDown','ArrowUp'], e.key)) {
@@ -142,6 +154,11 @@ exports.component = {
             } else {
                 this.displayList(input.value, e);
             }
+            this.$emit('keyup', e);
+        },
+
+        handleKeyDown(e){
+            this.$emit('keydown', e);
         },
 
         /**

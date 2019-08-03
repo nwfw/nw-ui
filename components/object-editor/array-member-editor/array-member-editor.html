@@ -3,7 +3,7 @@
         <span :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1 || componentOptions.viewerMode.enabled}]" :title="translate('Drag to reorder')"></span>
     </template>
     <span class="input">
-        <array-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" v-if="isArrayControl()" :array="array[index]" :title="'' + index" ref="object-value-editor">
+        <array-editor v-if="isArrayControl()" :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" :array="array[index]" :title="'' + index" ref="object-value-editor">
             <template slot="editor-item-prepend" v-if="!componentOptions.viewerMode.enabled">
                 <span v-if="componentOptions.allowReordering" :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1}]" :title="translate('Drag to reorder')"></span>
             </template>
@@ -12,7 +12,7 @@
                 <icon-link-confirm v-if="componentOptions.allowChildDeleting" class="legend-tool button-link" :confirm-classes="'remove-item'" v-bind:title="translate('Remove')" v-bind:icon-classes="['fa fa-trash']" v-bind:action="remove" v-bind:skip-notification="true" v-bind:auto-cancel-duration="6000" v-bind:no-auto-cancel="false"></icon-link-confirm>
             </template>
         </array-editor>
-        <object-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" v-else-if="isObjectControl()" :object="array[index]" :title="'' + index" ref="object-value-editor">
+        <object-editor v-else-if="isObjectControl()" :parent-path="propertyPath" :property-path="getChildPropertyPath(index)" :object-editor-options="getComponentOptions()" :object="array[index]" :title="'' + index" ref="object-value-editor">
             <template slot="editor-item-prepend" v-if="!componentOptions.viewerMode.enabled">
                 <span v-if="componentOptions.allowReordering" :class="['fa fa-arrows drag-handle row-inline-tool row-inline-tool-left', {'invisible-element': array.length <= 1}]" :title="translate('Drag to reorder')"></span>
             </template>

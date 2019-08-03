@@ -114,7 +114,7 @@ exports.component = {
 
         },
         isObjectControl () {
-            return _.isObject(this.object[this.name]);
+            return _.isObject(this.object[this.name]) && !_.isDate(this.object[this.name]);
         },
         isArrayControl () {
             return _.isArray(this.object[this.name]);
@@ -151,6 +151,6 @@ exports.component = {
         },
         removeCurrentItem () {
             this.removeItem(this.name);
-        }
+        },
     }
 };

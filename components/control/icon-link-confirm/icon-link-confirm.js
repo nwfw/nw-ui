@@ -55,8 +55,10 @@ exports.component = {
         'text',
         // Text to display for confirm link/icon
         'confirmText',
-        // Flag to force confirm tooltip rendering below checkbox
+        // Position for tooltip ('left', 'right', 'down', 'up', 'down-right', 'down-left', 'up-right', 'up-left'), default: 'left'
         'confirmTooltipPosition',
+        // Classes for confirm checkbox tooltip
+        'confirmTooltipClasses',
         // Text for confirm checkbox tooltip
         'confirmTooltip',
         // Title html attribute for link
@@ -118,6 +120,17 @@ exports.component = {
                 return 'left';
             }
         },
+        getConfirmTooltipClasses () {
+            let classes = [
+                'confirm-tooltip',
+                'confirm-tooltip-' + this.getConfirmTooltipPosition()
+            ];
+
+            if (this.confirmTooltipClasses) {
+                classes.push(this.confirmTooltipClasses);
+            }
+            return classes;
+        },
         getIconClasses: function(){
             let classes = ['icon-link-confirm'];
             if (this.noAutoCancel){
@@ -142,6 +155,11 @@ exports.component = {
             if (!_.isArray(confirmClasses)){
                 confirmClasses = [confirmClasses];
             }
+
+            if (this.noAutoCancel) {
+                confirmClasses.push('no-auto-cancel-wrapper');
+            }
+
             if (confirmClasses.length){
                 classes = _.concat(classes, confirmClasses);
             }

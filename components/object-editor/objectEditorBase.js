@@ -25,7 +25,7 @@ exports.component = {
         },
     },
     data: function () {
-        let defaultOptions = {
+        let defaultPropertyOptions = {
             debug: false,
             isRoot: false,
             viewerMode: {
@@ -37,6 +37,7 @@ exports.component = {
             childrenMinimized: false,
             preventMinimize: false,
             renderFieldset: true,
+            renderLeftLabels: true,
             renderRootFieldset: true,
             allowRenaming: true,
             allowDeleting: true,
@@ -55,8 +56,15 @@ exports.component = {
             disabledFieldPaths: [],
             readonlyFieldPaths: [],
             hiddenFieldPaths: [],
+
+            viewerDisabledFieldPaths: [],
+            viewerReadonlyFieldPaths: [],
+            viewerHiddenFieldPaths: [],
+
             propertyOptionsMap: {}
         };
+
+        let defaultOptions = _.cloneDeep(defaultPropertyOptions);
 
         let componentOptions = _.defaults(this.objectEditorOptions, defaultOptions);
         let isRoot = false;
@@ -69,11 +77,11 @@ exports.component = {
             componentOptions.renderFieldset = false;
         }
 
-
         return {
             showDebug: false,
             isRoot: isRoot,
             defaultOptions,
+            defaultPropertyOptions,
             componentOptions,
         };
     },
@@ -98,6 +106,26 @@ exports.component = {
         }
     },
     methods: {
+        isViewerMode(){
+            return (this.componentOptions.viewerMode && this.componentOptions.viewerMode.enabled) ? true : false;
+        },
+        enableViewerMode(){
+            if (!this.componentOptions.viewerMode.enabled) {
+                this.componentOptions.viewerMode.enabled = true;
+            }
+        },
+        disableViewerMode(){
+            if (this.componentOptions.viewerMode.enabled) {
+                this.componentOptions.viewerMode.enabled = false;
+            }
+        },
+        toggleViewerMode(){
+            if (this.componentOptions.viewerMode.enabled) {
+                this.disableViewerMode();
+            } else {
+                this.enableViewerMode();
+            }
+        },
         addingTypeAllowed(type) {
             if (!this.componentOptions.allowAddingTypes.length) {
                 return true;
@@ -180,17 +208,81 @@ exports.component = {
             }
             return childPropertyPath;
         },
+
+        isHiddenField(name){
+            let result = false;
+            let propertyPath = this.getPropertyPath(name);
+            if (propertyPath) {
+                if (this.isViewerMode()){
+                    result = this.componentOptions.viewerHiddenFieldPaths.indexOf(propertyPath) != -1;
+                } else {
+                    result = this.componentOptions.hiddenFieldPaths.indexOf(propertyPath) != -1;
+                }
+            }
+            return result;
+        },
+        isReadonlyField (name) {
+            let result = false;
+            let propertyPath = this.getPropertyPath(name);
+            if (propertyPath) {
+                if (this.isViewerMode()){
+                    result = (this.componentOptions.viewerReadonlyFieldPaths.indexOf(propertyPath) != -1);
+                } else {
+                    if (!this.componentOptions.forceAllEditable) {
+                        result = (this.componentOptions.readonlyFieldPaths.indexOf(propertyPath) != -1);
+                    }
+                }
+            }
+            return result;
+        },
+        isDisabledField (name) {
+            let result = false;
+            let propertyPath = this.getPropertyPath(name);
+            if (propertyPath) {
+                if (this.isViewerMode()){
+                    result = (this.componentOptions.viewerDisabledFieldPaths.indexOf(propertyPath) != -1);
+                } else {
+                    if (!this.componentOptions.forceAllEditable) {
+                        result = (this.componentOptions.disabledFieldPaths.indexOf(propertyPath) != -1);
+                    }
+                }
+            }
+            return result;
+        },
+
+
+        isHidden(){
+            let result = false;
+            if (this.isViewerMode()){
+                result = this.componentOptions.viewerHiddenFieldPaths.indexOf(this.propertyPath) != -1;
+            } else {
+                result = this.componentOptions.hiddenFieldPaths.indexOf(this.propertyPath) != -1;
+            }
+            return result;
+        },
         isReadonly () {
             let result = false;
-            if (!this.componentOptions.forceAllEditable && this.propertyPath) {
-                result = (this.componentOptions.readonlyFieldPaths.indexOf(this.propertyPath) != -1);
+            if (this.propertyPath) {
+                if (this.isViewerMode()){
+                    result = (this.componentOptions.viewerReadonlyFieldPaths.indexOf(this.propertyPath) != -1);
+                } else {
+                    if (!this.componentOptions.forceAllEditable) {
+                        result = (this.componentOptions.readonlyFieldPaths.indexOf(this.propertyPath) != -1);
+                    }
+                }
             }
             return result;
         },
         isDisabled () {
             let result = false;
-            if (!this.componentOptions.forceAllEditable && this.propertyPath) {
-                result = (this.componentOptions.disabledFieldPaths.indexOf(this.propertyPath) != -1);
+            if (this.propertyPath) {
+                if (this.isViewerMode()){
+                    result = (this.componentOptions.viewerDisabledFieldPaths.indexOf(this.propertyPath) != -1);
+                } else {
+                    if (!this.componentOptions.forceAllEditable) {
+                        result = (this.componentOptions.disabledFieldPaths.indexOf(this.propertyPath) != -1);
+                    }
+                }
             }
             return result;
         },

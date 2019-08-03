@@ -31,9 +31,37 @@
                     transform: translateY(-50%);
                 }
 
+                &.confirm-tooltip-up {
+                    top: -10px;
+                    transform: translate(-50%, -100%);
+                }
+
+                &.confirm-tooltip-up-left {
+                    top: -10px;
+                    left: -10px;
+                    transform: translate(-100%, -100%);
+                }
+
+                &.confirm-tooltip-up-right {
+                    top: -10px;
+                    left: 10px;
+                    transform: translateY(-50%);
+                }
+
                 &.confirm-tooltip-down {
                     top: calc(100% + 10px);
                     transform: translateX(-50%);
+                }
+
+                &.confirm-tooltip-down-left {
+                    top: 0px;
+                    left: -10px;
+                    transform: translateX(-100%);
+                }
+
+                &.confirm-tooltip-down-right {
+                    top: calc(100% + 10px);
+                    left: calc(100% + 10px);
                 }
             }
         }
@@ -47,6 +75,16 @@
             text-align: center;
             font-weight: var(--font-weight-light);
             pointer-events: none;
+        }
+
+        &.no-auto-cancel-wrapper {
+            & .icon-link-confirm-checkbox {
+                opacity: 1;
+            }
+
+            & .icon-link-confirm-checkbox-countdown {
+                visibility: hidden;
+            }
         }
 
         &:hover {

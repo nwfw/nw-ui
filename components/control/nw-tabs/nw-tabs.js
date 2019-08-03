@@ -36,15 +36,19 @@ exports.component = {
                         {
                             title: 'Tab',
                             body: 'Tab body',
+                            slot: '',
                             bodyComponentData: {},
                             bodyComponentName: '',
+                            disabled: false,
                             active: true
                         },
                         {
                             title: 'Tab 2',
                             body: 'Tab 2 body',
+                            slot: '',
                             bodyComponentData: {},
                             bodyComponentName: '',
+                            disabled: false,
                             active: false
                         }
                     ]
@@ -115,6 +119,10 @@ exports.component = {
                 this.tabChange(index);
             }
             this.$forceUpdate();
+            this.$nextTick(() => {
+                this.$emit('change', index, this.tabData.tabs[index]);
+            });
+
         }
     },
     computed: {}

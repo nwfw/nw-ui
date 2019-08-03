@@ -1,5 +1,5 @@
 <span class="nwui-control-wrapper autocomplete-text-wrapper">
-    <input class="autocomplete-text-input" type="text" :tabindex="tabindex" autocomplete="off" @keyup.esc.capture="handleEscKey" @keyup="handleKeyUp" @blur="handleBlur" :value="value" />
+    <input class="autocomplete-text-input" type="text" :tabindex="tabindex" autocomplete="off" @keyup.esc.capture="handleEscKey" @keyup="handleKeyUp" @keydown="handleKeyDown" @blur="handleBlur" @focus="handleFocus" :value="value" />
     <span class="autocomplete-text-input-placeholder" v-html="currentValue" v-if="currentValue"></span>
     <div class="autocomplete-text-list-wrapper" v-show="showList && autocompleteList && autocompleteList.length">
         <div class="autocomplete-text-tools">

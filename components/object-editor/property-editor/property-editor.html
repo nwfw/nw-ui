@@ -32,7 +32,7 @@
         <div class="object-editor-property object-editor-row object-editor-flex-row" v-if="showEditor">
             <label>
                 <!-- <span :class="['label fixed-label', {'fixed-label-top': isObjectControl()}]" v-if="!componentOptions.allowRenaming" v-html="name"></span> -->
-                <span :class="['label fixed-label', {'fixed-label-top': isObjectControl()}]" v-if="!componentOptions.renderFieldset" v-html="getPropertyLabel(name)"></span>
+                <span :class="['label fixed-label', {'fixed-label-top': isObjectControl()}]" v-if="(!isObjectControl() || componentOptions.renderLeftLabels) && !componentOptions.renderFieldset" v-html="getPropertyLabel(name)"></span>
                 <span class="input">
                     <value-editor :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="getComponentOptions()" :item="object[name]" :title="name" @change="valueChanged" ref="value-editor"></value-editor>
                 </span>

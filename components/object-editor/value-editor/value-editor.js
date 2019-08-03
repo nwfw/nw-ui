@@ -29,12 +29,20 @@ exports.component = {
     },
     beforeMount () {
         if (!this.isArray() && !this.isObject()) {
-            this.valuePlaceholder = this.item;
+            if (this.isDate() && this.item){
+                let fh = window.appWrapper.getHelper('format');
+                this.valuePlaceholder = fh.formatDateNormalize(this.item);
+            } else {
+                this.valuePlaceholder = this.item;
+            }
         }
     },
     methods: {
+        isDate () {
+            return _.isDate(this.item);
+        },
         isObject () {
-            return _.isObject(this.item);
+            return _.isObject(this.item) && !_.isDate(this.item);
         },
         isArray () {
             return _.isArray(this.item);

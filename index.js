@@ -20,6 +20,9 @@ exports.globalComponentMapping = [
         'accordion': {
             name: 'accordion'
         },
+        'nw-toggle-icon': {
+            name: 'nw-toggle-icon'
+        },
         'file-manager': {
             name: 'file-manager',
             components: {

@@ -12,12 +12,13 @@
     <template v-else>
         <template v-if="componentOptions.viewerMode.enabled">
             <span v-if="isBoolean()" :class="['value-editor-input quasi-value-editor-input quasi-value-editor-checkbox fa', {'fa-check-square-o': valuePlaceholder, 'fa-square-o': !valuePlaceholder}]"></span>
-            <span v-else class="value-editor-input quasi-value-editor-input " v-html="valuePlaceholder"></span>
-
+            <span v-else-if="!valuePlaceholder" class="value-editor-input quasi-value-editor-input quasi-value-editor-input-empty"><span class="empty-indicator" v-html="translate('empty')"></span></span>
+            <span v-else class="value-editor-input quasi-value-editor-input quasi-value-editor-input-text" v-html="valuePlaceholder"></span>
         </template>
-        <input type="checkbox" v-else-if="isBoolean()" :readonly="isReadonly()" :disabled="isDisabled()"  :class="'value-editor-input'" v-model.boolean="valuePlaceholder" @change="placeholderChanged" ref="value-editor-control" />
-        <input type="number" v-else-if="isNumber()" :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
-        <input type="text" v-else :readonly="isReadonly()" :disabled="isDisabled()" :class="'value-editor-input'" v-model.number="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
+        <input :data-property-path="propertyPath" type="checkbox" v-else-if="isBoolean()" :readonly="isReadonly()" :disabled="isDisabled()"  class="value-editor-input value-editor-input-checkbox" v-model.boolean="valuePlaceholder" @change="placeholderChanged" ref="value-editor-control" />
+        <input :data-property-path="propertyPath" type="number" v-else-if="isNumber()" :readonly="isReadonly()" :disabled="isDisabled()" class="value-editor-input value-editor-input-number" v-model.number="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
+        <!-- <input type="date" v-else-if="isDate()" :readonly="isReadonly()" :disabled="isDisabled()" class="value-editor-input value-editor-input-date" v-model="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  /> -->
+        <input :data-property-path="propertyPath" type="text" v-else :readonly="isReadonly()" :disabled="isDisabled()" class="value-editor-input value-editor-input-text" v-model="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control"  />
         <!-- <vars-text-input v-else :input-class="'value-editor-input'" v-model="valuePlaceholder" @input="placeholderChanged" ref="value-editor-control" /> -->
     </template>
 </div>

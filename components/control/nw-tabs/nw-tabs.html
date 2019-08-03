@@ -1,9 +1,9 @@
 <div class="nw-tabs">
     <div class="nw-tab-links">
-        <a :class="['nw-tab-link', {'inactive-tab-link': !tab.active, 'active-tab-link': tab.active}]" href="#" v-for="(tab, index) in tabData.tabs" :key="'tab_' + index + '_link'" v-html="tab.title" @click.prevent="setTab" :data-index="index"></a>
+        <a :class="['nw-tab-link', {'inactive-tab-link': !tab.active, 'active-tab-link': tab.active, 'hidden-element': tab.disabled}]" href="#" v-for="(tab, index) in tabData.tabs" :key="'tab_' + index + '_link'" v-html="tab.title" @click.prevent="setTab" :data-index="index"></a>
     </div>
     <div class="nw-tab-wrappers">
-        <div :class="['nw-tab', {'inactive-tab': !tab.active, 'active-tab': tab.active}]" v-for="(tab, index) in tabData.tabs" :key="'tab_' + index + '_contents'">
+        <div :class="['nw-tab', {'inactive-tab': !tab.active, 'active-tab': tab.active, 'hidden-element': tab.disabled}]" v-for="(tab, index) in tabData.tabs" :key="'tab_' + index + '_contents'">
             <div class="nw-tab-contents-wrapper" v-bind:style="tabStyles">
                 <template v-if="tab.bodyComponentName">
                     <component v-bind:is="tab.bodyComponentName" :ref="'tab_' + index + '_component'" v-bind:tab-data="tab"></component>

@@ -1,4 +1,4 @@
-<editor-fieldset :title="title" :class="['object-editor-fieldset', {'viewer-mode': isRoot && componentOptions.viewerMode.enabled}]" :fieldset-class="getFieldsetClasses()" ref="object-editor-section-fieldset" :initial-minimized="isRoot ? componentOptions.initialMinimized : componentOptions.childrenMinimized" :prevent-minimize="componentOptions.preventMinimize" :render-fieldset="componentOptions.renderRootFieldset">
+<editor-fieldset :title="title" :class="['object-editor-fieldset', {'viewer-mode': isRoot && isViewerMode()}]" :fieldset-class="getFieldsetClasses()" ref="object-editor-section-fieldset" :initial-minimized="isRoot ? componentOptions.initialMinimized : componentOptions.childrenMinimized" :prevent-minimize="componentOptions.preventMinimize" :render-fieldset="componentOptions.renderRootFieldset">
     <template slot="legend-prepend-before">
         <slot name="editor-item-prepend"></slot>
     </template>
@@ -38,7 +38,8 @@
         <transition-expand>
             <object-editor-debug :object-editor-options="objectEditorOptions" v-if="showDebug && componentOptions.debug" ref="object-editor-debug"></object-editor-debug>
         </transition-expand>
-        <property-editor v-if="componentOptions.hiddenFieldPaths.indexOf(getPropertyPath(name)) == -1" :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="componentOptions" :key="name" :ref="'property-editor_' + name" v-for="(value, name) in object" :name="name" :original-name="name" :title="''" :object="object" :clone-item="cloneItem" :remove-item="removeItem" :rename-item="renameItem" :on-change="objectChanged" :fieldset-class="getPropertyFieldsetClass(name)">
+        <!-- <property-editor v-if="componentOptions.hiddenFieldPaths.indexOf(getPropertyPath(name)) == -1" :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="componentOptions" :key="name" :ref="'property-editor_' + name" v-for="(value, name) in object" :name="name" :original-name="name" :title="''" :object="object" :clone-item="cloneItem" :remove-item="removeItem" :rename-item="renameItem" :on-change="objectChanged" :fieldset-class="getPropertyFieldsetClass(name)"> -->
+        <property-editor v-if="!isHiddenField(name)" :parent-path="propertyPath" :property-path="getChildPropertyPath(name)" :object-editor-options="componentOptions" :key="name" :ref="'property-editor_' + name" v-for="(value, name) in object" :name="name" :original-name="name" :title="''" :object="object" :clone-item="cloneItem" :remove-item="removeItem" :rename-item="renameItem" :on-change="objectChanged" :fieldset-class="getPropertyFieldsetClass(name)">
             <template slot="legend-title-prepend" v-if="componentOptions.showTypeIndicators && getTitlePrependText(name)">
                 <span v-if="isObject(name) || isArray(name)" :class="['editor-item-indicator', 'editor-item-indicator-property']" v-html="'property'"></span>
                 <span v-else :class="['editor-item-indicator', 'editor-item-indicator-' + getTitlePrependText(name)]" v-html="getTitlePrependText(name)"></span>
